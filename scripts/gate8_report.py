@@ -20,6 +20,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from enum import IntEnum
 
+from gate8_publication import published_verdict
+
 PASS = "PASS"
 FAIL = "FAIL"
 PENDING = "PENDING"
@@ -43,7 +45,9 @@ def _output_ok(output: dict) -> bool:
         output["exists"],
         output["tracked_file_count"] > 0,
         output["commit_count"] > 0,
-        output["remote_count"] == 0,
+        # remote_count is DELIBERATELY not judged here any more: asserting it
+        # was 0 made a correct build FAIL the moment the owner published
+        # (2026-08-19). Publication is measured by `criterion_1_published_verdict`.
         output.get("clean_worktree", False),
         all(count > 0 for count in output["rule50"].values()),
         links.get("banner_present", False),
@@ -52,7 +56,6 @@ def _output_ok(output: dict) -> bool:
         not links.get("urls_in_banner", []),
         tag["exists"], tag["annotated"], tag["points_at_head"],
         tag["tree_file_count"] == output["tracked_file_count"],
-        not tag["pushed"],
     ))
 
 
@@ -95,6 +98,10 @@ def build_report(c1: dict, c2: dict, c3: dict, counters: dict, verb_hits: dict) 
         criterion_2_readme_verdict(c2),
         criterion_3_machinery_verdict(c3),
     )
+    published = published_verdict(c1.get("outputs", {}), pending=PENDING, ok=PASS, fail=FAIL)
+    # The two README assets landed in c76c0a5 and this stayed hardcoded PENDING,
+    # so two gates disagreed about one fact. Measured from what is tracked.
+    shots = PASS if c2.get("screenshots", {}).get("non_curve_images", 0) > 0 else PENDING
     return {
         "gate": "GATE-8 (submission gate, .planning/ROADMAP.md Phase 8)",
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -106,16 +113,18 @@ def build_report(c1: dict, c2: dict, c3: dict, counters: dict, verb_hits: dict) 
         "criterion_1_two_cross_linked_repos_and_a_tag": {
             **c1,
             "built_and_tagged_verdict": built,
-            "published_verdict": PENDING,
-            "verdict": f"BUILT+TAGGED {built}; PUBLISHED {PENDING} (08-12)",
+            "published_verdict": published,
+            "verdict": f"BUILT+TAGGED {built}; PUBLISHED {published}"
+                       + (" (08-12)" if published == PENDING else ""),
         },
         "criterion_2_academic_readme_and_submission_form": {
             **c2,
             "readme_sections_verdict": readme,
-            "screenshots_verdict": PENDING,
+            "screenshots_verdict": shots,
             "form_and_per_member_verdict": PENDING,
-            "verdict": f"README {readme}; SCREENSHOTS {PENDING} (07-10); "
-                       f"FORM+SUBMISSION {PENDING} (08-14)",
+            "verdict": f"README {readme}; SCREENSHOTS {shots}"
+                       + ("" if shots == PASS else " (07-10)")
+                       + f"; FORM+SUBMISSION {PENDING} (08-14)",
         },
         "criterion_3_two_scored_league_games": {
             **c3,

@@ -1,9 +1,9 @@
 [
   {
-    "commit": "30ccaf198c2abfe875ad4d7967ea6ff54eb25964",
+    "commit": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
     "copied": 1064,
     "excluded": [],
-    "generated": "2026-08-19T17:21:54Z",
+    "generated": "2026-08-19T17:42:29Z",
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-police",
     "role": "police",
     "rows": [
@@ -18,12 +18,12 @@
         "ok": true
       },
       {
-        "detail": "commit 30ccaf1 is not an object in the source repository; a shared commit would mean an inherited history",
+        "detail": "commit 3dea614 is not an object in the source repository; a shared commit would mean an inherited history",
         "name": "history disjoint from the source repository",
         "ok": true
       },
       {
-        "detail": "README.md carries the split banner for role=police (32580 bytes read)",
+        "detail": "README.md carries the split banner for role=police (32942 bytes read)",
         "name": "rule-49 cross-link block present",
         "ok": true
       },
@@ -68,15 +68,15 @@
         "ok": true
       }
     ],
-    "source_commit": "fd706f8",
+    "source_commit": "6f6e799",
     "staged": 1065,
     "verdict": "pass"
   },
   {
-    "commit": "0c62e88c1753d31e4e8ca8915555ace039cfe56a",
+    "commit": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
     "copied": 1064,
     "excluded": [],
-    "generated": "2026-08-19T17:21:54Z",
+    "generated": "2026-08-19T17:42:29Z",
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-thief",
     "role": "thief",
     "rows": [
@@ -91,7 +91,7 @@
         "ok": true
       },
       {
-        "detail": "commit 0c62e88 is not an object in the source repository; a shared commit would mean an inherited history",
+        "detail": "commit c95f962 is not an object in the source repository; a shared commit would mean an inherited history",
         "name": "history disjoint from the source repository",
         "ok": true
       },
@@ -136,13 +136,13 @@
         "ok": true
       },
       {
-        "detail": "exit 1; 2621 passed, 5 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
+        "detail": "exit 0; 2626 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
         "name": "pytest --cov",
-        "ok": false
+        "ok": true
       }
     ],
-    "source_commit": "fd706f8",
+    "source_commit": "6f6e799",
     "staged": 1065,
-    "verdict": "FAIL"
+    "verdict": "pass"
   }
 ]

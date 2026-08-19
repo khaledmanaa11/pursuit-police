@@ -64,9 +64,18 @@ def test_every_measured_verdict_string_appears_verbatim_in_the_record() -> None:
 
 def test_the_verdict_strings_are_two_halves_and_not_a_bare_pass() -> None:
     """A criterion whose verdict is the single word PASS would defeat the test above."""
-    bare = {key: value for key, value in _verdicts().items() if value.strip() == "PASS"}
+    verdicts = _verdicts()
+    bare = {key: value for key, value in verdicts.items() if value.strip() == "PASS"}
     assert not bare, f"criterion reported as a blanket PASS: {bare}"
-    assert all("PENDING" in value for value in _verdicts().values())
+    # Every verdict must still NAME its halves. Until 2026-08-19 this also
+    # required a PENDING in each of the three, which was true while every
+    # criterion had a human half open -- and became wrong the day criterion 1's
+    # was closed by actually publishing. Structure is the durable property;
+    # "something is still pending" is asserted once, over the set.
+    assert all(";" in value for value in verdicts.values()), verdicts
+    assert any("PENDING" in value for value in verdicts.values()), (
+        "no half is pending, yet the record still says GATE-8 IS NOT MET"
+    )
 
 
 def test_the_record_says_the_gate_is_not_met() -> None:

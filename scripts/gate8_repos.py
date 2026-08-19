@@ -6,9 +6,12 @@
 THREE HALVES, NOT ONE VERDICT. `built` and `tagged` are measurable on this
 machine today; **`published` is not, and is reported PENDING** -- creating a
 GitHub repository and pushing to it needs an account, a consent screen and an
-irreversible outward call, all of which are 08-12's human's. `remote_count` is
-recorded per output precisely because `0` is the evidence that nothing has been
-published from here.
+irreversible outward call, all of which are 08-12's human's.
+
+`remote_count` USED TO BE ASSERTED AS ZERO, as evidence that nothing had been
+published from here. That reading expired the moment the owner published
+(2026-08-19) and made a correct build report FAIL. Publication is now MEASURED
+by `gate8_publication`, and this module reports the facts without judging them.
 """
 
 from __future__ import annotations
@@ -17,6 +20,7 @@ import re
 from pathlib import Path
 
 from gate8_common import ROLES, git_code, git_out, lines, split_root, tag_name
+from gate8_publication import publication_facts
 
 #: Rule 50's floor, counted rather than asserted present.
 _RULE50 = {
@@ -97,6 +101,7 @@ def measure_one(dest: Path, role: str) -> dict:
     if not (root / ".git").is_dir():
         return {"role": role, "root": str(root), "exists": False, "tracked_file_count": 0,
                 "remote_count": 0, "commit_count": 0, "rule50": {},
+                "publication": {"remote_count": 0},
                 "cross_link": {}, "tag": _tag_facts(root, tag_name())}
     paths = _tracked(root)
     return {
@@ -107,6 +112,7 @@ def measure_one(dest: Path, role: str) -> dict:
         "commit_count": len(lines(git_out(root, "log", "--oneline"))),
         "tracked_file_count": len(paths),
         "remote_count": len(lines(git_out(root, "remote"))),
+        "publication": publication_facts(root),
         "clean_worktree": not lines(git_out(root, "status", "--porcelain")),
         "rule50": {key: len(select(paths)) for key, select in _RULE50.items()},
         "cross_link": _cross_link(root, role),

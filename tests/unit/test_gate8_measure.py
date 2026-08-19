@@ -68,20 +68,18 @@ def test_a_fully_measured_run_exits_zero() -> None:
     assert report.exit_code(_report()) == report.GateExit.OK
 
 
-def test_a_pushed_tag_would_fail_criterion_one() -> None:
-    """The property this whole plan is organised around, asserted as a verdict."""
-    built = _report()
-    built["criterion_1_two_cross_linked_repos_and_a_tag"]["outputs"]["police"]["tag"][
-        "pushed"] = True
-    c1 = built["criterion_1_two_cross_linked_repos_and_a_tag"]
-    assert report.criterion_1_built_verdict(c1) == report.FAIL
+def test_a_remote_no_longer_fails_the_built_half() -> None:
+    """Publishing is the GOAL of 08-12, so it must not fail the BUILD's verdict.
 
-
-def test_a_remote_on_an_output_would_fail_criterion_one() -> None:
+    Until 2026-08-19 this asserted the opposite, and it was right to: nothing
+    had been published and `remote_count == 0` was the evidence. The owner then
+    published, and a wholly correct build reported BUILT+TAGGED FAIL. A gate
+    that fails when its goal is reached is measuring the wrong thing.
+    """
     built = _report()
     c1 = built["criterion_1_two_cross_linked_repos_and_a_tag"]
     c1["outputs"]["thief"]["remote_count"] = 1
-    assert report.criterion_1_built_verdict(c1) == report.FAIL
+    assert report.criterion_1_built_verdict(c1) == report.PASS
 
 
 def test_a_missing_tag_fails_and_exits_one() -> None:

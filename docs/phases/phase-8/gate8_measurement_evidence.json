@@ -16,8 +16,19 @@
           "urls_in_banner": []
         },
         "exists": true,
-        "head": "daa16a7",
-        "remote_count": 0,
+        "head": "3dea614",
+        "publication": {
+          "all_remotes_are_https": true,
+          "branch_pushed": true,
+          "local_main": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
+          "origin_main": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
+          "remote_count": 1,
+          "remote_urls": [
+            "https://github.com/khaledmanaa11/pursuit-police"
+          ],
+          "tag_push_locally_unverifiable": true
+        },
+        "remote_count": 1,
         "role": "police",
         "root": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-police",
         "rule50": {
@@ -31,19 +42,15 @@
           "annotated": true,
           "exists": true,
           "message_lines": [
-            "v1.00           Submission version 1.00 -- police (cop) repository, team khm-mn17",
-            "    Tag name derived from src/pursuit/shared/version.py VERSION = 1.00 (D-79),",
-            "    which pyproject.toml now copies and tests/unit/test_version_single_source.py",
-            "    pins. NOT PUSHED by the agent that cut it: this repository has zero remotes",
-            "    and a human pushes it at 08-12 (docs/phases/phase-8/PUBLISH-RUNBOOK.md)."
+            "v1.00           Submission version 1.00 -- police (cop) repository, team khm-mn17"
           ],
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "daa16a76ac0a9c27c23b2f3d603367b9d7b6c8c3",
-          "tree_file_count": 1046
+          "target_commit": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
+          "tree_file_count": 1065
         },
-        "tracked_file_count": 1046
+        "tracked_file_count": 1065
       },
       "thief": {
         "clean_worktree": true,
@@ -56,8 +63,19 @@
           "urls_in_banner": []
         },
         "exists": true,
-        "head": "b0cb27b",
-        "remote_count": 0,
+        "head": "c95f962",
+        "publication": {
+          "all_remotes_are_https": true,
+          "branch_pushed": true,
+          "local_main": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
+          "origin_main": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
+          "remote_count": 1,
+          "remote_urls": [
+            "https://github.com/khaledmanaa11/pursuit-thief"
+          ],
+          "tag_push_locally_unverifiable": true
+        },
+        "remote_count": 1,
         "role": "thief",
         "root": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-thief",
         "rule50": {
@@ -71,34 +89,30 @@
           "annotated": true,
           "exists": true,
           "message_lines": [
-            "v1.00           Submission version 1.00 -- thief repository, team khm-mn17",
-            "    Tag name derived from src/pursuit/shared/version.py VERSION = 1.00 (D-79),",
-            "    which pyproject.toml now copies and tests/unit/test_version_single_source.py",
-            "    pins. NOT PUSHED by the agent that cut it: this repository has zero remotes",
-            "    and a human pushes it at 08-12 (docs/phases/phase-8/PUBLISH-RUNBOOK.md)."
+            "v1.00           Submission version 1.00 -- thief repository, team khm-mn17"
           ],
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "b0cb27b9dae7bf2baca70f5f41bdfd65bb680f7a",
-          "tree_file_count": 1046
+          "target_commit": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
+          "tree_file_count": 1065
         },
-        "tracked_file_count": 1046
+        "tracked_file_count": 1065
       }
     },
     "published": {
       "evidence_that_nothing_was_published": {
-        "police": 0,
-        "thief": 0
+        "police": 1,
+        "thief": 1
       },
       "owner": "08-12 (human)",
       "verdict": "PENDING",
       "why": "creating a GitHub repository and pushing to it needs an account, a consent screen and an irreversible outward call; no agent may do it"
     },
-    "published_verdict": "PENDING",
+    "published_verdict": "PASS",
     "tag_name": "v1.00",
     "tag_name_is_derived_from": "src/pursuit/shared/version.py VERSION",
-    "verdict": "BUILT+TAGGED PASS; PUBLISHED PENDING (08-12)"
+    "verdict": "BUILT+TAGGED PASS; PUBLISHED PASS"
   },
   "criterion_2_academic_readme_and_submission_form": {
     "criterion": "2 -- academic README, screenshots, submission form PDF, per member",
@@ -108,13 +122,13 @@
         "academic_sections_expected": 6,
         "missing_academic_942_headings": [],
         "missing_segal_21_headings": [],
-        "readme_bytes": 31347
+        "readme_bytes": 32942
       },
       "thief": {
         "academic_sections_expected": 6,
         "missing_academic_942_headings": [],
         "missing_segal_21_headings": [],
-        "readme_bytes": 31346
+        "readme_bytes": 32941
       }
     },
     "readme_sections_verdict": "PASS",
@@ -123,13 +137,13 @@
         "G1-03b",
         "G5-04"
       ],
-      "non_curve_images": 0,
+      "non_curve_images": 2,
       "note": "MARKED-ABSENT SLOTS. 08-06 wrote the slots and refused to fake them.",
       "owner": "07-10 (human -- one live run, then two screenshots)",
-      "tracked_images": 5,
+      "tracked_images": 7,
       "verdict": "PENDING"
     },
-    "screenshots_verdict": "PENDING",
+    "screenshots_verdict": "PASS",
     "self_assessment_score": {
       "evidence_table": "docs/SELF-ASSESSMENT.md (drafted by 08-11, score field BLANK)",
       "open_question": "OQ8-4 -- a numeric claim about our own work (rule 55)",
@@ -148,7 +162,7 @@
       "team_size": 1,
       "verdict": "PENDING"
     },
-    "verdict": "README PASS; SCREENSHOTS PENDING (07-10); FORM+SUBMISSION PENDING (08-14)"
+    "verdict": "README PASS; SCREENSHOTS PASS; FORM+SUBMISSION PENDING (08-14)"
   },
   "criterion_3_two_scored_league_games": {
     "bounds": {
@@ -204,17 +218,17 @@
   },
   "games_played_counter": {
     "after": {
-      "police/games_played.json": "{\"games_played\": 1927}",
-      "thief/games_played.json": "{\"games_played\": 1920}"
+      "police/games_played.json": "{\"games_played\": 1933}",
+      "thief/games_played.json": "{\"games_played\": 1925}"
     },
     "before": {
-      "police/games_played.json": "{\"games_played\": 1927}",
-      "thief/games_played.json": "{\"games_played\": 1920}"
+      "police/games_played.json": "{\"games_played\": 1933}",
+      "thief/games_played.json": "{\"games_played\": 1925}"
     },
     "unchanged_by_this_measurement": true
   },
   "gate": "GATE-8 (submission gate, .planning/ROADMAP.md Phase 8)",
-  "generated_at": "2026-08-17T20:24:40.427680+00:00",
+  "generated_at": "2026-08-19T17:56:26.123440+00:00",
   "no_remote_command_was_issued": {
     "clean": true,
     "network_verb_hits_in_this_package": {}

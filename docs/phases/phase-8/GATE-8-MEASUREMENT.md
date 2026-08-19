@@ -1,27 +1,50 @@
 # GATE-8 measurement — Phase 8, the submission gate
 
-**Status: GATE-8 IS NOT MET, AND NOTHING BELOW READS PASS.** All three criteria are
-**structurally human-completed**: publishing two repositories, filling and submitting a form
-PDF, and playing scored games against real opponent teams. Each criterion below is therefore
-reported as **two named halves** — the half measured on this machine, and the half a human
-closes — and the criterion-level verdict is the string that joins them, so that a search for
-`PASS` cannot land on a criterion nobody has finished.
+**Status: GATE-8 IS NOT MET.** Criterion 1 is now closed on both halves -- the owner created
+and pushed both repositories on 2026-08-19 and both carry the annotated `v1.00` -- but
+criteria 2 and 3 each retain a half only a human can close: the submission form, and scored
+games against real opponent teams. Each criterion is reported as **named halves**, the
+measured one and the human one, and the criterion-level verdict is the string that joins them,
+so that a search for `PASS` cannot land on a criterion nobody has finished.
 
 | Criterion | Measured half | Human half | Whose |
 |---|---|---|---|
-| 1 — two cross-linked public repos + tag | **BUILT + TAGGED PASS** | **PUBLISHED PENDING** | 08-12 |
-| 2 — academic README, screenshots, form PDF, per member | **README PASS** | **SCREENSHOTS PENDING** · **FORM + SUBMISSION PENDING** | 07-10 · 08-14 |
-| 3 — ≥ 2 scored games vs different teams, reported with the commit hash | **MACHINERY PASS** | **GAMES PENDING** | 08-13 (needs 07-10) |
+| 1 — two cross-linked public repos + tag | **BUILT + TAGGED PASS** | **PUBLISHED PASS** (2026-08-19) | closed |
+| 2 — academic README, screenshots, form PDF, per member | **README PASS** · **SCREENSHOTS PASS** | **FORM + SUBMISSION PENDING** | 08-14 |
+| 3 — ≥ 2 scored games vs different teams, reported with the commit hash | **MACHINERY PASS** | **GAMES PENDING** | 08-13 |
 
 The three criterion verdicts, quoted verbatim from
 [`gate8_measurement_evidence.json`](gate8_measurement_evidence.json) so this record cannot
 drift from the run that produced it (`tests/unit/test_gate8_record.py` re-reads them):
 
 ```
-criterion_1: BUILT+TAGGED PASS; PUBLISHED PENDING (08-12)
-criterion_2: README PASS; SCREENSHOTS PENDING (07-10); FORM+SUBMISSION PENDING (08-14)
+criterion_1: BUILT+TAGGED PASS; PUBLISHED PASS
+criterion_2: README PASS; SCREENSHOTS PASS; FORM+SUBMISSION PENDING (08-14)
 criterion_3: MACHINERY PASS; GAMES PENDING (08-13, needs 07-10)
 ```
+
+**TWO VERDICTS MOVED BY CHANGING THE GATE, WHICH DESERVES ITS OWN PARAGRAPH.**
+
+*Criterion 1 reported `BUILT+TAGGED FAIL` immediately after the push.* Its built-half verdict
+listed `remote_count == 0` among the conditions -- recorded by 08-11 as the evidence that
+nothing had been published from this machine, which was true and load-bearing until the moment
+it stopped being. Every other sub-check passed. A gate that fails when its goal is reached is
+measuring the wrong thing, so the absence-assertion was replaced by a positive measurement in
+`scripts/gate8_publication.py`, and the built half went back to describing only the build and
+the tag. The new verdict discriminates -- `PENDING` before publication starts, `PASS` when both
+outputs carry one https remote and a pushed branch, and **`FAIL` on every half-published
+shape**, which is not hypothetical: on the day this project published, one output was pushed
+from a different source commit than the other and only one of the two tags landed.
+
+*Criterion 2's screenshots half was hardcoded `PENDING`* while `check_submission.py`, asking
+the same question of the same tree, reported the two README assets as PASS. Two gates
+disagreed about one fact; it is now measured from what is tracked.
+
+**WHAT THIS MEASUREMENT STILL CANNOT SEE.** Whether the **tag** reached the remote. Tags carry
+no tracking ref, so there is nothing local to compare, and the day's evidence shows the gap is
+real: `git push origin v1.00` failed with `src refspec v1.00 does not match any` while the
+branch push beside it succeeded. It is reported as `tag_push_locally_unverifiable` -- a fact
+about the measurement, never resolved into a verdict about the tag.
 
 **Date:** 2026-08-17 · **Plan:** 08-11 · **Method:** `scripts/measure_gate8.py`, plus
 `scripts/build_split_repos.py --gates` for criterion 1's inside-the-output gates and
