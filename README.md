@@ -459,13 +459,21 @@ the open ones cannot be forgotten. Its verdicts are narrated in
 Rule 49 requires the cop and the thief to be published as **two separate repositories**, each
 README linking to the other.
 
-> **Cross-link: NOT PRESENT.** Neither repository has been created or pushed. Nothing in this
-> project has been published: there is no remote, and `git tag -l` is empty. The two URLs are
-> `null` in `config/<role>/league.json`, each with a cited reason, and a guessed
-> `github.com/...` literal would be an invented value shipped inside a grader-facing
-> artifact. The link is filled in when a human creates both repositories (plan 08-12) — and
-> `scripts/check_submission.py` reports the slot as open until then, so it cannot ship empty
-> and unnoticed.
+| Agent | Repository |
+|---|---|
+| **Cop** (police) | https://github.com/khaledmanaa11/pursuit-police |
+| **Thief** | https://github.com/khaledmanaa11/pursuit-thief |
+
+Both are built from this development repository by `scripts/build_split_repos.py`, which runs
+`uv sync`, `ruff check`, `pytest --cov` and the 150-line scan **inside each output** before it
+reports success. Each carries the annotated tag **`v1.00`**, whose name is derived from
+`src/pursuit/shared/version.py` rather than chosen. The two histories are disjoint from this
+one and from each other.
+
+The same two links are recorded in `config/<role>/league.json` under `league.repo_urls`. The
+remaining two slots there -- `opponent_cop` and `opponent_thief` -- stay `null` until an
+opponent supplies them on league day, and `load_league_config` refuses `live` reporting while
+any slot is empty, so a scored game cannot begin with rule 49 half-satisfied.
 
 ---
 

@@ -78,15 +78,20 @@ async def test_the_written_keys_are_the_ones_parameters_165_names(tmp_path, monk
     assert {"role", "team_code", "os", "cpu", "ram_gb", "gpu", "llm_name"} <= set(signed)
 
 
-async def test_rule_49s_four_repo_links_are_carried_as_honest_absences(tmp_path, monkeypatch):
-    """Rule 49 wants FOUR links in both teams' JSON. None exists until a human
-    creates the repositories at 08-12, so each slot is a marker naming that
-    plan -- never a `https://github.com/...` guess reading as a claim."""
+async def test_rule_49s_four_repo_links_carry_ours_and_absent_the_opponents(tmp_path, monkeypatch):
+    """Rule 49 wants FOUR links in both teams' JSON. Two are ours and real as of
+    08-12; the opponent's two cannot be known before league day, so they stay
+    markers naming the plan that fills them -- never a `https://github.com/...`
+    guess reading as a claim. The declaration must carry that split HONESTLY:
+    what we know as a value, what we do not as a stated absence."""
     _report, path = await _declaration_of_a_real_game(tmp_path, monkeypatch, "declarationc")
     urls = json.loads(path.read_text(encoding="utf-8"))["repo_urls"]
     assert set(urls) == {"own_cop", "own_thief", "opponent_cop", "opponent_thief"}
-    assert all(is_stated_absent(value) for value in urls.values())
-    assert all("08-12" in value["detail"] for value in urls.values())
+    assert urls["own_cop"] == "https://github.com/khaledmanaa11/pursuit-police"
+    assert urls["own_thief"] == "https://github.com/khaledmanaa11/pursuit-thief"
+    for slot in ("opponent_cop", "opponent_thief"):
+        assert is_stated_absent(urls[slot]), f"{slot} must be an honest absence"
+        assert "08-13" in urls[slot]["detail"] or "08-12" in urls[slot]["detail"]
 
 
 async def test_the_games_played_figure_is_left_unset_with_its_reason(tmp_path, monkeypatch):

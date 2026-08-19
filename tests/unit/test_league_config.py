@@ -26,16 +26,39 @@ from tests.unit.league_config_fixtures import filled_body, shipped, write_league
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SHIPPED_FILES = (REPO_ROOT / "config/police/league.json", REPO_ROOT / "config/thief/league.json")
 
+#: The two repositories the owner created and pushed at 08-12, PINNED so a
+#: future agent still cannot invent a github.com literal quietly: changing
+#: either URL means editing this constant on purpose.
+OWN_COP = "https://github.com/khaledmanaa11/pursuit-police"
+OWN_THIEF = "https://github.com/khaledmanaa11/pursuit-thief"
+#: Absent until an opponent supplies them on league day, and asserted BY NAME
+#: rather than by count -- a count cannot tell which four went missing.
+STILL_ABSENT = (
+    "repo_urls.opponent_cop",
+    "repo_urls.opponent_thief",
+    "mcp_server_addresses.own",
+    "mcp_server_addresses.opponent",
+)
+
 DRY = {"mode": ReportingMode.DRY_RUN}
 LIVE = {"mode": ReportingMode.LIVE}
 
 
 @pytest.mark.parametrize("path", SHIPPED_FILES, ids=lambda p: p.parent.name)
-def test_the_shipped_file_loads_in_dry_run_with_every_slot_stated_absent(path):
+def test_the_shipped_file_states_our_two_repositories_and_absents_the_rest(path):
+    """08-12 filled the own-team half; the opponent half cannot be known yet.
+
+    Was "every slot stated absent", which was the truth until the owner created
+    and pushed the two repositories on 2026-08-19. The slots are now named
+    rather than counted, which is strictly stronger: the old assertion would
+    have been satisfied by ANY six absences, including the wrong six.
+    """
     params = load_league_config(path, **DRY)
     assert set(params.repo_urls) == set(REPO_URL_SLOTS)
     assert set(params.mcp_server_addresses) == set(MCP_ADDRESS_SLOTS)
-    assert len(params.absent_slots()) == len(REPO_URL_SLOTS) + len(MCP_ADDRESS_SLOTS)
+    assert params.repo_urls["own_cop"] == OWN_COP
+    assert params.repo_urls["own_thief"] == OWN_THIEF
+    assert set(params.absent_slots()) == set(STILL_ABSENT)
 
 
 @pytest.mark.parametrize("path", SHIPPED_FILES, ids=lambda p: p.parent.name)
@@ -60,12 +83,21 @@ def test_the_shipped_file_carries_no_games_played_leaf(path):
 
 
 @pytest.mark.parametrize("path", SHIPPED_FILES, ids=lambda p: p.parent.name)
-def test_no_shipped_slot_holds_a_url_shaped_string(path):
+def test_the_only_urls_shipped_are_the_two_the_owner_actually_supplied(path):
     """The invented-value failure in its most reasonable disguise: a guessed
-    `https://github.com/...` literal that reads as a claim in the artifact."""
+    `https://github.com/...` literal that reads as a claim in the artifact.
+
+    The guard did not go away when the real URLs arrived -- it got specific.
+    Two exact strings are permitted, both recorded from the owner; every other
+    slot must still be null. An agent that invents a third URL, or edits one of
+    these two, fails here.
+    """
     league = json.loads(path.read_text(encoding="utf-8"))["league"]
-    values = list(league["repo_urls"].values()) + list(league["mcp_server_addresses"].values())
-    assert values == [None] * len(values)
+    assert league["repo_urls"]["own_cop"] == OWN_COP
+    assert league["repo_urls"]["own_thief"] == OWN_THIEF
+    assert league["repo_urls"]["opponent_cop"] is None
+    assert league["repo_urls"]["opponent_thief"] is None
+    assert list(league["mcp_server_addresses"].values()) == [None, None]
 
 
 def test_absent_slots_are_rendered_as_markers_for_the_declaration(tmp_path):

@@ -1,9 +1,9 @@
 [
   {
-    "commit": "daa16a76ac0a9c27c23b2f3d603367b9d7b6c8c3",
-    "copied": 1045,
+    "commit": "30ccaf198c2abfe875ad4d7967ea6ff54eb25964",
+    "copied": 1064,
     "excluded": [],
-    "generated": "2026-08-17T20:07:37Z",
+    "generated": "2026-08-19T17:21:54Z",
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-police",
     "role": "police",
     "rows": [
@@ -18,17 +18,17 @@
         "ok": true
       },
       {
-        "detail": "commit daa16a7 is not an object in the source repository; a shared commit would mean an inherited history",
+        "detail": "commit 30ccaf1 is not an object in the source repository; a shared commit would mean an inherited history",
         "name": "history disjoint from the source repository",
         "ok": true
       },
       {
-        "detail": "README.md carries the split banner for role=police (31347 bytes read)",
+        "detail": "README.md carries the split banner for role=police (32580 bytes read)",
         "name": "rule-49 cross-link block present",
         "ok": true
       },
       {
-        "detail": "exit 0; scanned 545 tracked .py files under ['src/', 'tests/', 'training/']; violations 0 (a scan of 0 files is a vacuous pass and fails this row)",
+        "detail": "exit 0; scanned 557 tracked .py files under ['src/', 'tests/', 'training/']; violations 0 (a scan of 0 files is a vacuous pass and fails this row)",
         "name": "line-limit (<=150 code lines)",
         "ok": true
       },
@@ -63,20 +63,20 @@
         "ok": true
       },
       {
-        "detail": "exit 0; 2582 passed, 0 failed; coverage 97.44% against fail_under 85.0% (a run of 0 tests fails this row)",
+        "detail": "exit 0; 2626 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
         "name": "pytest --cov",
         "ok": true
       }
     ],
-    "source_commit": "99a8959",
-    "staged": 1046,
+    "source_commit": "fd706f8",
+    "staged": 1065,
     "verdict": "pass"
   },
   {
-    "commit": "b0cb27b9dae7bf2baca70f5f41bdfd65bb680f7a",
-    "copied": 1045,
+    "commit": "0c62e88c1753d31e4e8ca8915555ace039cfe56a",
+    "copied": 1064,
     "excluded": [],
-    "generated": "2026-08-17T20:07:37Z",
+    "generated": "2026-08-19T17:21:54Z",
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-thief",
     "role": "thief",
     "rows": [
@@ -91,17 +91,17 @@
         "ok": true
       },
       {
-        "detail": "commit b0cb27b is not an object in the source repository; a shared commit would mean an inherited history",
+        "detail": "commit 0c62e88 is not an object in the source repository; a shared commit would mean an inherited history",
         "name": "history disjoint from the source repository",
         "ok": true
       },
       {
-        "detail": "README.md carries the split banner for role=thief (31346 bytes read)",
+        "detail": "README.md carries the split banner for role=thief (32941 bytes read)",
         "name": "rule-49 cross-link block present",
         "ok": true
       },
       {
-        "detail": "exit 0; scanned 545 tracked .py files under ['src/', 'tests/', 'training/']; violations 0 (a scan of 0 files is a vacuous pass and fails this row)",
+        "detail": "exit 0; scanned 557 tracked .py files under ['src/', 'tests/', 'training/']; violations 0 (a scan of 0 files is a vacuous pass and fails this row)",
         "name": "line-limit (<=150 code lines)",
         "ok": true
       },
@@ -136,13 +136,13 @@
         "ok": true
       },
       {
-        "detail": "exit 0; 2582 passed, 0 failed; coverage 97.44% against fail_under 85.0% (a run of 0 tests fails this row)",
+        "detail": "exit 1; 2621 passed, 5 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
         "name": "pytest --cov",
-        "ok": true
+        "ok": false
       }
     ],
-    "source_commit": "99a8959",
-    "staged": 1046,
-    "verdict": "pass"
+    "source_commit": "fd706f8",
+    "staged": 1065,
+    "verdict": "FAIL"
   }
 ]
