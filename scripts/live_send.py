@@ -7,28 +7,26 @@ repository before this file was built by a gate or a unit test around a FAKE
 transport. `OAUTH-RUNBOOK.md` Sec4 step 4 nevertheless told the operator to flip
 the config and run `dev_launch.py`, which is precisely the shape that refusal
 exists to stop. Measured 2026-08-19: that procedure fails twice and sends
-nothing. This is the missing half -- what the runbook meant by "07-10 constructs
-GmailSink itself".
+nothing. This is the missing half.
 
-THE SHIPPED CONFIG IS NEVER EDITED. Flip-and-flip-back leaves a `live` config
-in the working tree between two commands, one `git add -A` from being published,
-and it turns five guard tests red while it sits there (all five observed, same
-day). Here `dry_run` ON DISK IS A PRECONDITION: this refuses a config that is
-already live, and lifts the copy it holds in memory (`dataclasses.replace`),
-which is never written back.
+THE SHIPPED CONFIG IS NEVER EDITED. `dry_run` ON DISK IS A PRECONDITION and LIVE
+is applied to an in-memory copy that is never written back, so no `live` config
+ever sits in the working tree waiting to be committed.
 
-IT DOES NOT PLAY A GAME AND IT DOES NOT READ THE LEAGUE CONFIG. It sends a
-report a real game already produced. `load_league_config` refuses live mode
-until all four rule-49 repo URLs are real -- including the OPPONENT'S TWO, which
-do not exist until league day -- so routing this through the game path would
-make the first real transmission of this project's life happen during a scored
-game, with rule 35 zeroing BOTH teams if it went wrong. The guard stays exactly
-as strict as it is for games. This is not a game.
+IT DOES NOT PLAY A GAME AND IT DOES NOT READ THE LEAGUE CONFIG. `load_league_
+config` refuses live mode until all four rule-49 repo URLs are real -- including
+the OPPONENT'S TWO, absent until league day -- so routing this through the game
+path would make the first real transmission of this project's life happen during
+a scored game, with rule 35 zeroing BOTH teams if it went wrong.
 
-WHAT IT PROVES AND WHAT IT DOES NOT. It proves the delivered half: a real
-message, through the real chain, with the JSON attached. It proves nothing
-about a game's outcome, and it writes no artifact -- the report it sends was
-already written, by the run that produced it.
+`--recipient` IS REQUIRED AND HAS NO DEFAULT, and that is the whole lesson of
+this file's first day in service. `reporting.json`'s recipient is the spec's
+mandatory address (`docs/PARAMETERS.md:176`, FIXED -- the loader rejects any
+other value), so a rehearsal that "just used the config" mailed the LECTURER a
+throwaway self-play report. Making the address impossible to supply by accident
+is worth more than the keystrokes it costs: to reach the mandatory destination
+you now type `--recipient mandatory`, and to rehearse you type your own address.
+The GAME path is untouched and still cannot address anything else.
 """
 
 from __future__ import annotations
@@ -37,112 +35,40 @@ import argparse
 import asyncio
 import json
 import sys
-from dataclasses import replace
 from pathlib import Path
 
-from pursuit.services.reporting.end_of_game import build_reporting_chain
-from pursuit.services.reporting.gmail_sink import GmailSink, build_gmail_transport
-from pursuit.shared.reporting_config import (
-    ReportingMode,
-    ReportingParams,
-    load_reporting_config,
-)
+from live_send_core import live_params, send_once
 
-#: Refused rather than "helpfully" accepted: a live config on disk means the
-#: flip-and-flip-back procedure is half-done, and finishing it silently here
-#: would leave the operator with a live file and no reason to notice.
-ALREADY_LIVE = (
-    "the config on disk is already 'live'; this script needs the SHIPPED dry_run "
-    "config and lifts it in memory. Restore it (git checkout config/<role>/"
-    "reporting.json) and run again"
+#: Typed instead of the address itself, so the irreversible choice is a word the
+#: operator had to mean, not a string they could paste from a runbook by habit.
+MANDATORY_TOKEN = "mandatory"
+LECTURER_BANNER = (
+    "=== THE MANDATORY DESTINATION: this message goes to the LECTURER's grading\n"
+    "=== address ({recipient}). This is the real thing, not a rehearsal."
 )
-#: stdout is retained evidence for this step, the same channel the runbooks use.
+REHEARSAL_BANNER = (
+    "=== REHEARSAL: sending to {recipient}, which is NOT the mandatory grading\n"
+    "=== address. Nothing about this send reaches the lecturer."
+)
 SENT_LINE = "=== PURSUIT LIVE SEND: message accepted by Gmail, id={message_id} ==="
 NOT_SENT_LINE = "=== PURSUIT LIVE SEND: NOT SENT ({refusal}); nothing was transmitted ==="
 
 
-class _SendWatchdog:
-    """`ctx.watchdog`'s surface for a one-shot send: counts, freezes nothing.
+def resolve_recipient(value: str, mandatory: str) -> tuple[str, bool]:
+    """`(address, is_the_mandatory_destination)` for one `--recipient` value.
 
-    `watchdog_touching` marks activity on entry and in a `finally`; a real
-    freeze watchdog's action is `os._exit`, which is not what a supervised
-    single send a human is watching should ever do.
-
-    DELIBERATELY NOT `gate7_common.RecordingWatchdog`, whose surface is
-    identical. `gate7_common` POPS `PURSUIT_GMAIL_CREDENTIALS_PATH` and
-    `PURSUIT_GMAIL_TOKEN_PATH` OUT OF `os.environ` AT IMPORT TIME -- exactly
-    right for a gate that must never let a grader's shell become a live API
-    call, and fatal here, where the live send IS the point. Importing it for
-    these six lines disarmed this script: three runs on 2026-08-19 all died on
-    "environment variable PURSUIT_GMAIL_CREDENTIALS_PATH ... is unset" with the
-    variable demonstrably set in the calling shell. Six duplicated lines beat
-    an import whose documented purpose is to make this file impossible.
+    The literal token expands to the spec address; anything else is taken as
+    typed, INCLUDING the mandatory address spelled out in full -- someone who
+    types it means it just as much as someone who types the token.
     """
-
-    def __init__(self) -> None:
-        self.touches = 0
-
-    def touch(self) -> None:
-        self.touches += 1
-
-
-class _ReceiptCapturingSink:
-    """Wrap the real sink so the id Gmail returned survives the chain.
-
-    `ReportingChain` collapses a success to `SendOutcome(sent=True)` and drops
-    the `SendReceipt`. That is right for the GAME path, which only needs to know
-    whether it still owes a report -- and useless for THIS step, whose entire
-    output is the message id a human checks the mailbox against. Captured by
-    wrapping rather than by widening `chain.py`: the game path's return contract
-    is not this script's to change.
-    """
-
-    def __init__(self, inner) -> None:
-        self._inner = inner
-        self.receipt = None
-
-    async def send(self, report: dict):
-        self.receipt = await self._inner.send(report)
-        return self.receipt
-
-
-def live_params(config_dir: Path | str) -> ReportingParams:
-    """The shipped `dry_run` config, lifted to LIVE **in memory only**."""
-    params = load_reporting_config(Path(config_dir) / "reporting.json")
-    if params.mode is not ReportingMode.DRY_RUN:
-        raise ValueError(ALREADY_LIVE)
-    return replace(params, mode=ReportingMode.LIVE)
-
-
-async def send_once(
-    report: dict,
-    params: ReportingParams,
-    *,
-    work_dir: Path | str,
-    transport_builder=build_gmail_transport,
-):
-    """One report through the SHIPPED chain, with a real `GmailSink` on the end.
-
-    Returns `(outcome, receipt)`. The receipt is `None` on refusal and carries
-    the Gmail message id on success -- see `_ReceiptCapturingSink` for why it
-    cannot simply be read off the outcome.
-
-    `transport_builder` is the seam every test drives with a fake, mirroring
-    `build_gmail_transport`'s own `credentials_loader`. `work_dir` holds only
-    the quota ledger: no artifact is written here, because the report being
-    sent was written by the game that produced it.
-    """
-    capturing = _ReceiptCapturingSink(
-        GmailSink(transport=transport_builder(params), recipient=params.recipient)
-    )
-    chain = build_reporting_chain(
-        params,
-        watchdog=_SendWatchdog(),
-        artifact_dir=work_dir,
-        quota_dir=work_dir,
-        sink=capturing,
-    )
-    return await chain.send(report), capturing.receipt
+    if value == MANDATORY_TOKEN:
+        return mandatory, True
+    if "@" not in value:
+        raise ValueError(
+            f"--recipient must be an email address or the literal "
+            f"'{MANDATORY_TOKEN}'; got {value!r}"
+        )
+    return value, value == mandatory
 
 
 def _parse(argv: list[str]) -> argparse.Namespace:
@@ -150,9 +76,17 @@ def _parse(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--config-dir", required=True, help="config/police or config/thief")
     parser.add_argument("--result", required=True, help="a result_<game_id>.json to send")
     parser.add_argument(
+        "--recipient",
+        required=True,
+        help=(
+            f"your own address to rehearse, or the literal '{MANDATORY_TOKEN}' to "
+            f"mail the lecturer's grading address. No default, deliberately."
+        ),
+    )
+    parser.add_argument(
         "--confirm-live-send",
         action="store_true",
-        help="required: this transmits a real message to the mandatory recipient",
+        help="required: this transmits a real message and cannot be undone",
     )
     return parser.parse_args(argv)
 
@@ -161,22 +95,30 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse(sys.argv[1:] if argv is None else argv)
     if not args.confirm_live_send:
         print(
-            "refusing: pass --confirm-live-send. This sends REAL mail to the "
-            "mandatory recipient and cannot be undone (rule 35).",
+            "refusing: pass --confirm-live-send. This sends REAL mail and "
+            "cannot be undone (rule 35).",
             file=sys.stderr,
         )
         return 2
-    report = json.loads(Path(args.result).read_text(encoding="utf-8"))
     params = live_params(args.config_dir)
+    try:
+        recipient, is_mandatory = resolve_recipient(args.recipient, params.recipient)
+    except ValueError as exc:
+        print(f"refusing: {exc}", file=sys.stderr)
+        return 2
+    banner = LECTURER_BANNER if is_mandatory else REHEARSAL_BANNER
+    print(banner.format(recipient=recipient))
+    report = json.loads(Path(args.result).read_text(encoding="utf-8"))
     outcome, receipt = asyncio.run(
-        send_once(report, params, work_dir=Path(args.result).parent)
+        send_once(
+            report, params, recipient=recipient, work_dir=Path(args.result).parent
+        )
     )
     if not outcome.sent:
         print(NOT_SENT_LINE.format(refusal=outcome.refusal), file=sys.stderr)
         return 1
     print(SENT_LINE.format(message_id=receipt.message_id))
-    print(f"recipient={params.recipient}  report={Path(args.result).name}")
-    print("NOW CHECK THE MAILBOX: rule 35 asks whether it ARRIVED, with the JSON attached.")
+    print(f"recipient={recipient}  report={Path(args.result).name}")
     return 0
 
 

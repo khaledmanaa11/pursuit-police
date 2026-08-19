@@ -163,31 +163,45 @@ applied to an in-memory copy that is never written back.
    Both configs stay `dry_run`. Confirm with `git diff config/` — it must be EMPTY, and
    stays empty for the whole of this step.
 
-2. Set the two environment variables in the SAME window, then send:
+2. **Rehearse to your OWN address first.** `--recipient` is required and has no
+   default, because the version of this script without it mailed the LECTURER a throwaway
+   self-play report on its first run (2026-08-19). `reporting.json`'s recipient is the spec's
+   mandatory grading address and nothing else -- `docs/PARAMETERS.md:176`, FIXED, the loader
+   rejects any other value -- so "just use the config" and "mail the lecturer" were the same
+   sentence. They no longer are.
 
    ```powershell
-   $env:PURSUIT_GMAIL_CREDENTIALS_PATH = "<path to the client JSON, OUTSIDE the repo>"
-   $env:PURSUIT_GMAIL_TOKEN_PATH       = "<path to the token cache, OUTSIDE the repo>"
-   uv run python scripts/live_send.py --config-dir config/police --result game_artifacts/police/result_<game_id>.json --confirm-live-send
+   $env:PURSUIT_GMAIL_CREDENTIALS_PATH = "<path to the client JSON, OUTSIDE the repo>"; $env:PURSUIT_GMAIL_TOKEN_PATH = "<path to the token cache, OUTSIDE the repo>"; uv run python scripts/live_send.py --config-dir config/police --result game_artifacts/police/result_<game_id>.json --recipient <your.own@address> --confirm-live-send
    ```
 
-   `--confirm-live-send` is required and has no default: this transmits real mail to the
-   mandatory recipient and cannot be undone. On success the script prints the Gmail
-   **message id** — captured by wrapping the sink, because `ReportingChain` collapses a
-   success to `SendOutcome(sent=True)` and drops the receipt.
+   It prints a `REHEARSAL:` banner naming where the message is going. Check your own inbox
+   for the message **with the JSON attached** -- that proves the entire pipe, and it proves
+   it without spending anything in the lecturer's inbox.
 
-3. **Confirm arrival, which is a different claim from "we sent it"** (rule 35). Open the
+3. **Only then, the real one.** Type the token; the address itself is deliberately not
+   accepted from a runbook by habit:
+
+   ```powershell
+   uv run python scripts/live_send.py --config-dir config/police --result game_artifacts/police/result_<game_id>.json --recipient mandatory --confirm-live-send
+   ```
+
+   It prints a `THE MANDATORY DESTINATION ... goes to the LECTURER's grading address`
+   banner. On success both forms print the Gmail **message id** -- captured by wrapping the
+   sink, because `ReportingChain` collapses a success to `SendOutcome(sent=True)` and drops
+   the receipt.
+
+4. **Confirm arrival, which is a different claim from "we sent it"** (rule 35). Open the
    mandatory recipient's mailbox and check the message is there **with the
    `result_<game_id>.json` ATTACHED**. A report sent as free text is rejected in processing
    and scores zero (rule 34, [`RULES.md:75`](../../RULES.md)).
 
-4. Confirm nothing moved:
+5. Confirm nothing moved:
 
    ```powershell
    git diff config/            # still EMPTY -- this step never edited it
    ```
 
-5. Confirm the counters advanced by exactly one each, for exactly one game:
+6. Confirm the counters advanced by exactly one each, for exactly one game:
 
    ```powershell
    Get-Content config/police/games_played.json, config/thief/games_played.json

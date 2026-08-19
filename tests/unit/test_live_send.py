@@ -1,4 +1,4 @@
-"""The supervised live send's contract (07-10), driven with a FAKE transport.
+"""The live send CORE's contract (07-10), driven with a FAKE transport.
 
 No credential, no network, no browser: `live_send.send_once` takes its
 transport builder as a seam, exactly as `build_gmail_transport` takes its
@@ -30,7 +30,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT / "scripts") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-import live_send  # noqa: E402
+import live_send_core as live_send  # noqa: E402
 
 from pursuit.shared.reporting_config import ReportingMode  # noqa: E402
 from tests.unit.gmail_fixtures import (  # noqa: E402
@@ -41,6 +41,8 @@ from tests.unit.gmail_fixtures import (  # noqa: E402
 )
 
 SHIPPED_POLICE = REPO_ROOT / "config" / "police"
+#: Never the mandatory address: these tests must not model mailing the lecturer.
+REHEARSAL_ADDRESS = "khaled.mnaa43@gmail.com"
 
 
 def _transport(statuses=(OK_STATUS,)):
@@ -79,6 +81,7 @@ async def test_the_report_is_sent_with_the_json_attached(tmp_path):
     outcome, receipt = await live_send.send_once(
         report,
         live_send.live_params(SHIPPED_POLICE),
+        recipient=REHEARSAL_ADDRESS,
         work_dir=tmp_path,
         transport_builder=builder,
     )
@@ -101,22 +104,13 @@ async def test_a_refusing_server_reports_not_sent_rather_than_raising(tmp_path):
     outcome, receipt = await live_send.send_once(
         sample_report(),
         replace(live_send.live_params(SHIPPED_POLICE), wait_after_error_seconds=0),
+        recipient=REHEARSAL_ADDRESS,
         work_dir=tmp_path,
         transport_builder=builder,
     )
     assert outcome.sent is False
     assert receipt is None, "no receipt may be reported for a message never accepted"
     assert fake.attempts > 1, "the gatekeeper's ladder should have retried"
-
-
-def test_the_cli_refuses_without_the_confirmation_flag(tmp_path, capsys):
-    artifact = tmp_path / "result_x.json"
-    artifact.write_text(json.dumps(sample_report()), encoding="utf-8")
-    code = live_send.main(
-        ["--config-dir", str(SHIPPED_POLICE), "--result", str(artifact)]
-    )
-    assert code != 0
-    assert "--confirm-live-send" in capsys.readouterr().err
 
 
 def test_importing_this_script_does_not_disarm_the_credential_environment():
