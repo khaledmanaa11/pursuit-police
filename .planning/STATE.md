@@ -75,6 +75,36 @@ Resume file: None -- 08-11 is committed and closed, and it was the LAST UNATTEND
   dragging in a file whose value a tool normalises.
 ---
 
+## CURRENT STATUS — 2026-08-20, and it supersedes the narrative below
+
+**Everything from here down is the 2026-08-17 session record**, written when 08-11 closed and
+08-12/13/14 were all still pending. It is kept as a record, not as a status. Where it and this
+block disagree, **this block is current** — five of its statements have since been overtaken:
+
+| The record below says | What is true now |
+|---|---|
+| the licence is `AWAITING_OWNER_CONFIRMATION` — **"DO NOT PUBLISH UNTIL THE OWNER CONFIRMS"** | **MIT, adopted by the owner on 2026-08-19.** `LICENSE` no longer carries its `PREPARED, NOT ADOPTED` block and `docs/SUBMISSION-CHECKLIST.md` reads `CONFIRMED_BY_THE_OWNER`. OQ8-5 is **closed** |
+| OQ8-9 (is `origin` public?) is unanswered | **Answered: `origin` is PUBLIC.** A scan of the full history found no provider-key shape and no credential file ever committed |
+| the four rule-49 repo URLs are all `null` | **Our two are recorded** in `config/*/league.json` and in both READMEs. The opponent's two stay `null` until league day, and the loader still refuses live mode while any slot is empty |
+| the split outputs are `daa16a7` / `b0cb27b` from `99a8959`, 1046 files, one commit each | **Rebuilt with full history (D-83)**: 1070 files, **580 commits each**, annotated `v1.00` on HEAD, 24/24 gate rows, published to the two public repositories |
+| 08-12 is pending and blocked | **08-12 is complete.** Both repositories are created, pushed and tagged |
+
+**Still open, and all three are a human's:**
+
+- **08-13** — the two scored league games. Needs an opponent; nothing in the code blocks it.
+- **08-14** — the submission form. Needs three values only the owner can set: where the form
+  lives (OQ8-3), the self-assessment score (OQ8-4, blank and pinned blank), and the
+  games-played VALUE (OQ8-2 — rule 38 makes a false figure an absolute disqualification, so
+  nothing here may choose it; evidence in `docs/phases/phase-7/GAMES-PLAYED-RECONSTRUCTION.md`).
+- **D7-17** — drafted and still unsent, at
+  `docs/phases/phase-8/D7-17-QUESTION-FOR-THE-LECTURER.md`.
+
+**07-10 is proven but not spent.** The live Gmail path was exercised end to end on 2026-08-19 —
+OAuth consent, send-only scope, real transport, JSON attached — delivered to the owner's own
+inbox via `scripts/live_send.py --recipient`. The send to the mandatory grading address happens
+once, on league day, carrying a real game report.
+
+
 Last session: 2026-08-17T23:30:00+03:00
 Stopped at: Completed 08-11 in full -- **THE LAST UNATTENDED PLAN OF THE PROJECT.** No plan file
   existed; executed from `08-PLAN-OUTLINE.md` Sec9, the same way 08-03 .. 08-10 were. **ELEVEN

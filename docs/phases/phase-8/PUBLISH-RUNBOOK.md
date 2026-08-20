@@ -44,19 +44,8 @@ committed, and no credential-bearing file was ever added and removed. `origin` b
 is therefore not a disclosure. This is a **negative result from a scanner proven to match**
 — the provider patterns are 08-03's, which carry a planted-secret positive control.
 
-**An observation recorded rather than acted on.** During phases 7 and 8 this repository's
-`origin/main` moved **without any agent pushing it** — verified on 2026-08-14 and 2026-08-16,
-with no pushing git hook in the tree. Two consequences: (1) `origin` is not under manual
-control, which matters more now that it is known to be public; (2) **08-11 deliberately did
-not cut a tag in this repository**, only in the two split outputs, because a local tag here
-could be swept outward by that process. See `GATE-8-MEASUREMENT.md` criterion 1.
-
----|---|---|
-| **OQ8-9 — is `origin` public or private?** | If `https://github.com/khaledmanaa11/AI_ORCHISTRATION_final_project.git` is already **public**, then everything this repository has ever tracked is already published, and the secrets question stops being preventive and becomes urgent. | Open the URL while signed out of GitHub. Public if it loads. |
-| **OQ8-5 — the licence** | `LICENSE` is drafted (MIT) and carries a **`PREPARED, NOT ADOPTED`** block; `docs/SUBMISSION-CHECKLIST.md` carries **`LICENCE STATUS: AWAITING_OWNER_CONFIRMATION`**. A licence is a legal declaration about the owner's own coursework. **Do not publish until the owner confirms.** | `LICENSE`, and the licence section of `docs/SUBMISSION-CHECKLIST.md` |
-
-A biconditional test fails if either of those two markers changes without the other, so removing
-one and forgetting the other breaks the suite rather than shipping quietly.
+**The licence's two halves cannot drift apart.** `tests/unit/test_packaging_metadata.py` holds `LICENSE` and the `LICENCE STATUS` field in `docs/SUBMISSION-CHECKLIST.md` as a **biconditional**: while the file carries its `PREPARED, NOT ADOPTED` block the field must read the
+awaiting-confirmation token, and when the block is deleted the field must read the confirmed one. Removing one and forgetting the other breaks the suite rather than shipping quietly. Both moved together on 2026-08-19.
 
 **An observation recorded rather than acted on.** During phases 7 and 8 this repository's
 `origin/main` moved **without any agent pushing it** — verified on 2026-08-14 and 2026-08-16,
