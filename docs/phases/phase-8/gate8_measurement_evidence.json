@@ -7,7 +7,7 @@
     "outputs": {
       "police": {
         "clean_worktree": true,
-        "commit_count": 1,
+        "commit_count": 578,
         "cross_link": {
           "banner_lines": 25,
           "banner_present": true,
@@ -16,19 +16,17 @@
           "urls_in_banner": []
         },
         "exists": true,
-        "head": "3dea614",
+        "head": "6b3946d",
         "publication": {
-          "all_remotes_are_https": true,
-          "branch_pushed": true,
-          "local_main": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
-          "origin_main": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
-          "remote_count": 1,
-          "remote_urls": [
-            "https://github.com/khaledmanaa11/pursuit-police"
-          ],
+          "all_remotes_are_https": false,
+          "branch_pushed": false,
+          "local_main": "6b3946d33400a058fc8169d299c31da6f59cb204",
+          "origin_main": "refs/remotes/origin/main",
+          "remote_count": 0,
+          "remote_urls": [],
           "tag_push_locally_unverifiable": true
         },
-        "remote_count": 1,
+        "remote_count": 0,
         "role": "police",
         "root": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-police",
         "rule50": {
@@ -47,14 +45,14 @@
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "3dea614abacacfabf04fe5e5ce97c1f9da1f911d",
-          "tree_file_count": 1065
+          "target_commit": "6b3946d33400a058fc8169d299c31da6f59cb204",
+          "tree_file_count": 1070
         },
-        "tracked_file_count": 1065
+        "tracked_file_count": 1070
       },
       "thief": {
         "clean_worktree": true,
-        "commit_count": 1,
+        "commit_count": 578,
         "cross_link": {
           "banner_lines": 25,
           "banner_present": true,
@@ -63,19 +61,17 @@
           "urls_in_banner": []
         },
         "exists": true,
-        "head": "c95f962",
+        "head": "a16fc93",
         "publication": {
-          "all_remotes_are_https": true,
-          "branch_pushed": true,
-          "local_main": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
-          "origin_main": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
-          "remote_count": 1,
-          "remote_urls": [
-            "https://github.com/khaledmanaa11/pursuit-thief"
-          ],
+          "all_remotes_are_https": false,
+          "branch_pushed": false,
+          "local_main": "a16fc93e3638d92b5bf95faec4bccbe22fbdc02a",
+          "origin_main": "refs/remotes/origin/main",
+          "remote_count": 0,
+          "remote_urls": [],
           "tag_push_locally_unverifiable": true
         },
-        "remote_count": 1,
+        "remote_count": 0,
         "role": "thief",
         "root": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-thief",
         "rule50": {
@@ -94,25 +90,25 @@
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "c95f96259d9e8d5016b182885c7f5cf1d2badc4c",
-          "tree_file_count": 1065
+          "target_commit": "a16fc93e3638d92b5bf95faec4bccbe22fbdc02a",
+          "tree_file_count": 1070
         },
-        "tracked_file_count": 1065
+        "tracked_file_count": 1070
       }
     },
     "published": {
       "evidence_that_nothing_was_published": {
-        "police": 1,
-        "thief": 1
+        "police": 0,
+        "thief": 0
       },
       "owner": "08-12 (human)",
       "verdict": "PENDING",
       "why": "creating a GitHub repository and pushing to it needs an account, a consent screen and an irreversible outward call; no agent may do it"
     },
-    "published_verdict": "PASS",
+    "published_verdict": "PENDING",
     "tag_name": "v1.00",
     "tag_name_is_derived_from": "src/pursuit/shared/version.py VERSION",
-    "verdict": "BUILT+TAGGED PASS; PUBLISHED PASS"
+    "verdict": "BUILT+TAGGED PASS; PUBLISHED PENDING (08-12)"
   },
   "criterion_2_academic_readme_and_submission_form": {
     "criterion": "2 -- academic README, screenshots, submission form PDF, per member",
@@ -228,7 +224,7 @@
     "unchanged_by_this_measurement": true
   },
   "gate": "GATE-8 (submission gate, .planning/ROADMAP.md Phase 8)",
-  "generated_at": "2026-08-19T17:56:26.123440+00:00",
+  "generated_at": "2026-08-20T13:08:31.393947+00:00",
   "no_remote_command_was_issued": {
     "clean": true,
     "network_verb_hits_in_this_package": {}

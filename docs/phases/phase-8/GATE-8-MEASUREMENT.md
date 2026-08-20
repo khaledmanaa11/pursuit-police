@@ -9,7 +9,7 @@ so that a search for `PASS` cannot land on a criterion nobody has finished.
 
 | Criterion | Measured half | Human half | Whose |
 |---|---|---|---|
-| 1 — two cross-linked public repos + tag | **BUILT + TAGGED PASS** | **PUBLISHED PASS** (2026-08-19) | closed |
+| 1 — two cross-linked public repos + tag | **BUILT + TAGGED PASS** | **PUBLISHED PENDING** — re-published after the D-83 history rebuild | 08-12 |
 | 2 — academic README, screenshots, form PDF, per member | **README PASS** · **SCREENSHOTS PASS** | **FORM + SUBMISSION PENDING** | 08-14 |
 | 3 — ≥ 2 scored games vs different teams, reported with the commit hash | **MACHINERY PASS** | **GAMES PENDING** | 08-13 |
 
@@ -18,10 +18,25 @@ The three criterion verdicts, quoted verbatim from
 drift from the run that produced it (`tests/unit/test_gate8_record.py` re-reads them):
 
 ```
-criterion_1: BUILT+TAGGED PASS; PUBLISHED PASS
+criterion_1: BUILT+TAGGED PASS; PUBLISHED PENDING (08-12)
 criterion_2: README PASS; SCREENSHOTS PASS; FORM+SUBMISSION PENDING (08-14)
 criterion_3: MACHINERY PASS; GAMES PENDING (08-13, needs 07-10)
 ```
+
+**CRITERION 1 WENT BACK TO `PUBLISHED PENDING`, AND THAT IS THE GATE WORKING.**
+
+Both repositories were published on 2026-08-19 and the criterion read `PUBLISHED PASS`.
+They were then REBUILT with `--with-history` (D-83), and `--replace` recreates each
+output's `.git` directory -- which destroys its remote and its tag along with it. The
+publication row measures `refs/remotes/origin/main` in the OUTPUT, so with the remotes
+gone it correctly reports that these particular trees have not been published. The
+commits now on GitHub are the previous, one-commit build.
+
+This record says PENDING rather than carrying the older PASS forward, because the
+sentence "the submitted repositories are published" is false about the trees that
+currently exist on disk. It returns to PASS when the owner force-pushes the rebuilt
+histories -- `PUBLISH-RUNBOOK.md` steps 3 and 4 -- and the gate is re-run. A gate whose
+verdict survived the destruction of the thing it measures would be worth nothing.
 
 **TWO VERDICTS MOVED BY CHANGING THE GATE, WHICH DESERVES ITS OWN PARAGRAPH.**
 
