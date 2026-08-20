@@ -137,6 +137,37 @@ def assert_no_remotes(root: Path) -> int:
     return 0
 
 
+def commit_onto_history(dest_root: Path, paths, message: str, source_root: Path) -> str:
+    """Commit exactly *paths* on top of an ALREADY-CLONED history (08-12).
+
+    The sibling of `init_and_commit` for the `--with-history` path: no `git
+    init`, because the repository already exists and already has commits. Uses
+    the same NUL-separated pathspec, so the import commit stages exactly the
+    manifest and cannot pick up a stray file the clone left behind. Deletions
+    made by `split_history.prune_to_manifest` are already in the index and ride
+    along in this commit -- which is the point: a file the manifest drops must
+    leave in a commit a reader can see, not vanish between builds.
+
+    `--allow-empty` is deliberately NOT passed. If the injected banner and
+    provenance file produced no change, something upstream did not write them,
+    and an empty import commit would hide that behind a plausible log entry.
+    """
+    listed = tuple(paths)
+    if not listed:
+        raise EmptyBuildError("refusing to add an empty import commit to a history.")
+    name, email = commit_identity(source_root)
+    spec = Path(dest_root) / ".git" / "split-pathspec"
+    spec.write_bytes(b"\0".join(path.encode("utf-8") for path in listed))
+    _run(dest_root, "add", "--pathspec-from-file", str(spec), "--pathspec-file-nul")
+    spec.unlink()
+    _run(
+        dest_root, "-c", f"user.name={name}", "-c", f"user.email={email}",
+        "-c", "commit.gpgsign=false", "commit", "--no-verify", "-m", message,
+    )
+    assert_no_remotes(dest_root)
+    return _run(dest_root, "rev-parse", "HEAD")
+
+
 def init_and_commit(dest_root: Path, paths, message: str, source_root: Path) -> str:
     """`git init`, stage exactly *paths* by pathspec, commit once, return the hash."""
     listed = tuple(paths)

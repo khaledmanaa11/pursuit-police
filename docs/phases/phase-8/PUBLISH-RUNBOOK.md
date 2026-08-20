@@ -75,8 +75,29 @@ lands after the build it describes. The build is idempotent and is one command.
 
 ```bash
 uv run python scripts/build_split_repos.py --dest C:/Users/Hp/pursuit-split-repos --replace --gates \
-    --json docs/phases/phase-8/split_build_evidence.json
+    --with-history --json docs/phases/phase-8/split_build_evidence.json
 ```
+
+**`--with-history` carries this repository's commit history into each output** (D-83).
+`docs/SEGAL_GUIDELINES.md:325` grades *orderly Git history* among the Extensibility &
+standards items, and it is judged on the repository handed in -- an output with one
+commit hides every commit of TDD from the one reader they were kept for. Omitting the
+flag builds 08-10's original shape: one commit, history disjoint from this repository.
+
+**The flag reverses a documented safety property, and REPLACES it rather than dropping
+it.** `split_build.py` refuses to build inside this tree precisely because a clone
+inherits this repository's `origin`, so one reflex `git push` publishes private history.
+That reasoning held while this repository was private. It is now public (OQ8-9, answered
+2026-08-19), so the history is already published and the clone discloses nothing new --
+and `clone_history` removes the inherited remote before returning, which `no_remote_row`
+then re-checks from outside. A freshly built output has nothing to push to.
+
+Two verification rows change meaning with the flag, together and never one alone:
+
+| Without `--with-history` | With `--with-history` |
+|---|---|
+| `exactly one commit` | `development history preserved` -- the count must equal this repository's own count **plus exactly one**, so a shallow or truncated clone fails rather than shipping with holes |
+| `history disjoint from the source repository` | `history rooted in the source repository` -- the import commit must be **new** and descend **directly** from this repository's HEAD |
 
 Exit 0 means every row of every output passed, including `uv sync`, `ruff check .`,
 `pytest --cov` and the line-limit scan **inside each output**. Exit 2 means the build produced

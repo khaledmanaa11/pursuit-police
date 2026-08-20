@@ -35,6 +35,23 @@ def single_commit_row(dest: Path) -> Check:
     return Check("exactly one commit", count == "1", f"rev-list --count HEAD = {count or '?'}")
 
 
+def preserved_history_row(dest: Path, floor: int) -> Check:
+    """The development history arrived, and the import commit sits on top of it.
+
+    `floor` is the source's own commit count, so this cannot be satisfied by a
+    shallow or truncated clone: a history that lost commits on the way fails
+    here rather than shipping as "orderly" with holes in it.
+    """
+    count = int(_count(dest, "rev-list", "--count", "HEAD") or 0)
+    expected = floor + 1
+    return Check(
+        "development history preserved",
+        count == expected,
+        f"rev-list --count HEAD = {count}; expected {expected} "
+        f"({floor} from the source, plus the submission import commit)",
+    )
+
+
 def no_remote_row(dest: Path) -> Check:
     """Zero remotes. Nothing in this plan may be pushable by accident."""
     found = [name for name in git_out(dest, "remote").splitlines() if name.strip()]
@@ -55,6 +72,36 @@ def disjoint_history_row(source_root: Path, sha: str) -> Check:
     )
 
 
+def rooted_history_row(source_root: Path, dest: Path) -> Check:
+    """HEAD is NEW, its parent is the source's own HEAD. Both halves, or neither.
+
+    The mirror image of `disjoint_history_row`, and deliberately not merely its
+    negation. "Some commit is shared" would be satisfied by a stray object; this
+    asserts the import commit descends DIRECTLY from the commit the source is
+    sitting on, which is the only shape that makes the published log the real
+    development history rather than something that merely overlaps it.
+    """
+    head = _count(dest, "rev-parse", "HEAD")
+    parent = _count(dest, "rev-parse", "HEAD~1")
+    head_known = _known(source_root, head)
+    parent_known = _known(source_root, parent)
+    return Check(
+        "history rooted in the source repository",
+        parent_known and not head_known,
+        f"parent {parent[:7]} {'IS' if parent_known else 'is NOT'} known to the source "
+        f"and HEAD {head[:7]} {'IS' if head_known else 'is not'} -- the import commit "
+        "must be new and must sit directly on the source's history",
+    )
+
+
+def _known(source_root: Path, sha: str) -> bool:
+    """Whether *sha* resolves to a commit object in the source repository."""
+    return subprocess.run(
+        ["git", "cat-file", "-e", f"{sha}^{{commit}}"],
+        cwd=source_root, capture_output=True, text=True, check=False,
+    ).returncode == 0
+
+
 def cross_link_row(dest: Path, role: str) -> Check:
     """The rule-49 block, present and naming this repository's own role."""
     readme = Path(dest) / "README.md"
@@ -68,15 +115,25 @@ def cross_link_row(dest: Path, role: str) -> Check:
     )
 
 
-def git_rows(dest: Path, source_root: Path, role: str) -> tuple[Check, ...]:
-    """Every git-shape row for one built repository."""
-    sha = _count(dest, "rev-parse", "HEAD")
-    return (
-        single_commit_row(dest),
-        no_remote_row(dest),
-        disjoint_history_row(source_root, sha),
-        cross_link_row(dest, role),
-    )
+def git_rows(dest: Path, source_root: Path, role: str,
+             history_floor: int | None = None) -> tuple[Check, ...]:
+    """Every git-shape row for one built repository.
+
+    `history_floor` selects which pair of history rows applies and carries the
+    number they are checked against. None keeps 08-10's shape (one commit,
+    disjoint); an int is the source's commit count for a history-carrying build.
+    Two rows change meaning together, never one, because "one commit" and
+    "disjoint history" were two statements of the same decision.
+    """
+    if history_floor is None:
+        sha = _count(dest, "rev-parse", "HEAD")
+        history = (single_commit_row(dest), disjoint_history_row(source_root, sha))
+    else:
+        history = (
+            preserved_history_row(dest, history_floor),
+            rooted_history_row(source_root, dest),
+        )
+    return (*history, no_remote_row(dest), cross_link_row(dest, role))
 
 
 def overall(rows) -> bool:

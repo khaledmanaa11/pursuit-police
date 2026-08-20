@@ -36,6 +36,7 @@ if __package__ in (None, ""):
 
 from split_build import (  # noqa: E402
     UnsafeDestinationError,
+    commit_onto_history,
     copy_files,
     init_and_commit,
     prepare_destination,
@@ -49,6 +50,10 @@ from split_gates import (  # noqa: E402
     run_gate,
     simple_row,
     suite_row,
+)
+from split_history import (  # noqa: E402
+    clone_history,
+    prune_to_manifest,
 )
 from split_manifest import ROLES, manifest_for  # noqa: E402
 from split_report import git_rows, overall, render  # noqa: E402
@@ -79,6 +84,9 @@ class BuildPlan:
     manifest: object
     source_commit: str
     stamp: str
+    #: The source's own commit count -- the floor a preserved history is checked
+    #: against, read once with the manifest so both outputs answer to one number.
+    source_commits: int = 0
 
 
 def plan_build(source_root: Path) -> BuildPlan:
@@ -87,14 +95,19 @@ def plan_build(source_root: Path) -> BuildPlan:
         manifest_for(source_root),
         git_out(source_root, "rev-parse", "--short", "HEAD").strip(),
         datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        int(git_out(source_root, "rev-list", "--count", "HEAD").strip() or 0),
     )
 
 
 def build_one(source_root: Path, dest_root: Path, role: str, replace: bool,
-              plan: BuildPlan) -> dict:
+              plan: BuildPlan, with_history: bool = False) -> dict:
     """Materialise one role's repository and return what was built, in numbers."""
     manifest, source_commit, stamp = plan.manifest, plan.source_commit, plan.stamp
     dest = prepare_destination(dest_root, source_root, replace=replace)
+    cloned, pruned = 0, ()
+    if with_history:
+        cloned = clone_history(source_root, dest)
+        pruned = prune_to_manifest(dest, manifest.included)
     copied = copy_files(source_root, dest, manifest.included)
 
     readme = dest / "README.md"
@@ -108,23 +121,28 @@ def build_one(source_root: Path, dest_root: Path, role: str, replace: bool,
         encoding="utf-8", newline="\n",
     )
     staged = (*manifest.included, PROVENANCE)
-    sha = init_and_commit(
-        dest, staged,
-        f"chore: initial import of the {role} submission repository "
-        f"(split from {source_commit}, {manifest.count} tracked files)",
-        source_root,
+    verb = "submission import" if with_history else "initial import"
+    message = (
+        f"chore: {verb} of the {role} submission repository "
+        f"(split from {source_commit}, {manifest.count} tracked files)"
+    )
+    sha = (commit_onto_history if with_history else init_and_commit)(
+        dest, staged, message, source_root
     )
     return {
         "role": role, "path": str(dest), "commit": sha, "source_commit": source_commit,
         "generated": stamp, "copied": copied, "staged": len(staged),
+        "history": {"carried": with_history, "cloned_commits": cloned,
+                    "pruned": list(pruned)},
         "excluded": [{"path": path, "reason": reason} for path, reason in manifest.excluded],
     }
 
 
-def verify_one(dest: Path, source_root: Path, role: str, with_gates: bool) -> list:
+def verify_one(dest: Path, source_root: Path, role: str, with_gates: bool,
+               history_floor: int | None = None) -> list:
     """Every row for one built repository, structural first, gates last."""
     rows = [
-        *git_rows(dest, source_root, role),
+        *git_rows(dest, source_root, role, history_floor),
         line_limit_row(dest), absence_row(dest), config_row(dest),
         rule50_row(dest), workflow_row(dest),
     ]
@@ -144,6 +162,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--replace", action="store_true", help="rebuild over an existing tree")
     parser.add_argument("--gates", action="store_true",
                         help="also run uv sync, ruff and pytest --cov inside each output")
+    parser.add_argument("--with-history", action="store_true",
+                        help="carry the source's commit history into each output "
+                             "(SEGAL Sec17 grades 'orderly Git history'); the clone's "
+                             "inherited origin is removed before the build returns")
     parser.add_argument("--json", type=Path, default=None, help="write the evidence here")
     parser.add_argument("--source", type=Path, default=None,
                         help="the repository to split (default: the one this script lives in)")
@@ -155,11 +177,12 @@ def main(argv: list[str] | None = None) -> int:
     for role in args.roles:
         try:
             built = build_one(source_root, args.dest / NAME_TEMPLATE.format(role=role),
-                              role, args.replace, plan)
+                              role, args.replace, plan, args.with_history)
         except UnsafeDestinationError as exc:
             print(f"REFUSED: {exc}")
             return 2
-        rows = verify_one(Path(built["path"]), source_root, role, args.gates)
+        floor = plan.source_commits if args.with_history else None
+        rows = verify_one(Path(built["path"]), source_root, role, args.gates, floor)
         checked += len(rows)
         failures += sum(1 for row in rows if not row.ok)
         print(render(role, rows))
