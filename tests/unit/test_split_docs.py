@@ -30,6 +30,7 @@ import pytest
 from tests.unit.submission_gate_helpers import load
 
 docs_mod = load("split_docs")
+prov_mod = load("split_provenance")
 
 SHA = "0f6fbf3"
 STAMP = "2026-08-17T00:00:00Z"
@@ -81,9 +82,12 @@ def test_one_missing_slot_is_stated_absent_beside_a_real_one(role: str) -> None:
     assert LINKS["thief"] not in text
 
 
-def test_the_generator_holds_no_url_literal_of_its_own() -> None:
-    """No URL-shaped STRING CONSTANT in the module's code, so there is nothing to
-    fall back on when a slot is empty.
+@pytest.mark.parametrize("mod", [docs_mod, prov_mod], ids=["split_docs", "split_provenance"])
+def test_the_generator_holds_no_url_literal_of_its_own(mod) -> None:
+    """No URL-shaped STRING CONSTANT in either generator module's code, so there
+    is nothing to fall back on when a slot is empty. `split_provenance` is
+    scanned too: `provenance` lived here until the 150-line split, and moving it
+    must not move it out of this guard's reach.
 
     An AST walk, not a grep over the file: the module docstring quotes
     `https://github.com/<user>/pursuit-cop` as the example of what must never be
@@ -91,7 +95,7 @@ def test_the_generator_holds_no_url_literal_of_its_own() -> None:
     a check that fires on a file for saying the right thing. Docstrings are
     subtracted by name, every other constant is examined.
     """
-    tree = ast.parse(pathlib.Path(docs_mod.__file__).read_text(encoding="utf-8"))
+    tree = ast.parse(pathlib.Path(mod.__file__).read_text(encoding="utf-8"))
     docstrings = {
         ast.get_docstring(node, clean=False)
         for node in ast.walk(tree)
@@ -105,7 +109,7 @@ def test_the_generator_holds_no_url_literal_of_its_own() -> None:
         and node.value not in docstrings
         and ("github.com" in node.value or "https://" in node.value)
     ]
-    assert not offenders, f"split_docs.py carries hardcoded URL literal(s): {offenders}"
+    assert not offenders, f"{mod.__name__}.py carries hardcoded URL literal(s): {offenders}"
 
 
 def test_the_ast_guard_would_catch_a_planted_literal() -> None:
@@ -151,20 +155,3 @@ def test_injection_refuses_to_run_twice() -> None:
     once = docs_mod.inject("# Title\n\nbody\n", docs_mod.banner("police", SHA, STAMP))
     with pytest.raises(docs_mod.MissingAnchorError):
         docs_mod.inject(once, docs_mod.banner("police", SHA, STAMP))
-
-
-def test_the_provenance_document_reports_counts_not_adjectives() -> None:
-    text = docs_mod.provenance("police", SHA, STAMP, included=907, excluded=(
-        ("config/police/games_played.json", "D-77: live rule-37 counter"),
-    ))
-    assert "907" in text
-    assert "config/police/games_played.json" in text
-    assert "D-77" in text
-    assert "core.hooksPath scripts/hooks" in text
-    for shape in URL_SHAPES:
-        assert shape.lower() not in text.lower()
-
-
-def test_the_provenance_document_refuses_a_zero_file_build() -> None:
-    with pytest.raises(docs_mod.EmptyBuildError):
-        docs_mod.provenance("police", SHA, STAMP, included=0, excluded=())

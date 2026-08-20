@@ -40,9 +40,10 @@ if __package__ in (None, ""):
 
 from gate7_common import counter_snapshot  # noqa: E402
 from gate8_common import DEFAULT_SPLIT_DEST, network_verb_hits  # noqa: E402
+from gate8_league import measure_criterion_3  # noqa: E402
 from gate8_report import build_report, exit_code  # noqa: E402
 from gate8_repos import measure as measure_repos  # noqa: E402
-from gate8_submission import measure_criterion_2, measure_criterion_3  # noqa: E402
+from gate8_submission import measure_criterion_2  # noqa: E402
 
 _OUT_PATH = Path("docs/phases/phase-8/gate8_measurement_evidence.json")
 

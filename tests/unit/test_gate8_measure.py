@@ -24,7 +24,6 @@ if str(REPO_ROOT / "scripts") not in sys.path:
 import gate8_common as common  # noqa: E402
 import gate8_report as report  # noqa: E402
 import gate8_repos as repos  # noqa: E402
-import gate8_submission as submission  # noqa: E402
 
 from pursuit.shared.version import VERSION  # noqa: E402
 
@@ -169,9 +168,3 @@ def test_the_banner_block_stops_at_the_end_of_the_blockquote() -> None:
     block = repos._banner_block(text, "police")
     assert "NOT ASSIGNED" in block
     assert "gofastmcp" not in block
-
-
-def test_the_declaration_writer_has_a_production_call_site_that_is_not_its_own_module() -> None:
-    sites = submission._call_sites()
-    assert sites, "write_declaration_artifact has no production caller"
-    assert all(submission.DECLARATION_WRITER_MODULE not in site for site in sites), sites

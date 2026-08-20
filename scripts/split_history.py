@@ -33,7 +33,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from split_build import RemoteFoundError, assert_no_remotes
+from split_commit import RemoteFoundError, assert_no_remotes
 
 #: The one branch a submission repository carries.
 BRANCH = "main"

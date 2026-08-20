@@ -18,7 +18,7 @@ import subprocess
 
 from tests.unit.submission_gate_helpers import REPO_ROOT, load
 
-build_mod = load("split_build")
+commit_mod = load("split_commit")
 docs_mod = load("split_docs")
 report_mod = load("split_report")
 
@@ -30,7 +30,7 @@ def _built(tmp_path, banner: bool = True):
     if banner:
         text = docs_mod.inject(text, docs_mod.banner("police", "abc1234", "now"))
     (root / "README.md").write_text(text, encoding="utf-8")
-    build_mod.init_and_commit(root, ("README.md",), "initial", REPO_ROOT)
+    commit_mod.init_and_commit(root, ("README.md",), "initial", REPO_ROOT)
     return root
 
 
