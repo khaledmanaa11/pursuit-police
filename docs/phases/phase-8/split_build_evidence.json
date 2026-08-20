@@ -1,24 +1,24 @@
 [
   {
-    "commit": "6b3946d33400a058fc8169d299c31da6f59cb204",
+    "commit": "2740a317608d281fc2751635daac3f8c1dc66e38",
     "copied": 1069,
     "excluded": [],
-    "generated": "2026-08-20T12:58:12Z",
+    "generated": "2026-08-20T14:02:59Z",
     "history": {
       "carried": true,
-      "cloned_commits": 577,
+      "cloned_commits": 581,
       "pruned": []
     },
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-police",
     "role": "police",
     "rows": [
       {
-        "detail": "rev-list --count HEAD = 578; expected 578 (577 from the source, plus the submission import commit)",
+        "detail": "rev-list --count HEAD = 582; expected 582 (581 from the source, plus the submission import commit)",
         "name": "development history preserved",
         "ok": true
       },
       {
-        "detail": "parent 60a7a1d IS known to the source and HEAD 6b3946d is not -- the import commit must be new and must sit directly on the source's history",
+        "detail": "parent b0d141e IS known to the source and HEAD 2740a31 is not -- the import commit must be new and must sit directly on the source's history",
         "name": "history rooted in the source repository",
         "ok": true
       },
@@ -28,7 +28,7 @@
         "ok": true
       },
       {
-        "detail": "README.md carries the split banner for role=police (32942 bytes read)",
+        "detail": "README.md carries the split banner for role=police (33644 bytes read)",
         "name": "rule-49 cross-link block present",
         "ok": true
       },
@@ -68,35 +68,35 @@
         "ok": true
       },
       {
-        "detail": "exit 0; 2641 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
+        "detail": "exit 0; 2647 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
         "name": "pytest --cov",
         "ok": true
       }
     ],
-    "source_commit": "60a7a1d",
+    "source_commit": "b0d141e",
     "staged": 1070,
     "verdict": "pass"
   },
   {
-    "commit": "a16fc93e3638d92b5bf95faec4bccbe22fbdc02a",
+    "commit": "13955cfa221242920596f6eb959e254ceb0e1813",
     "copied": 1069,
     "excluded": [],
-    "generated": "2026-08-20T12:58:12Z",
+    "generated": "2026-08-20T14:02:59Z",
     "history": {
       "carried": true,
-      "cloned_commits": 577,
+      "cloned_commits": 581,
       "pruned": []
     },
     "path": "C:\\Users\\Hp\\pursuit-split-repos\\pursuit-thief",
     "role": "thief",
     "rows": [
       {
-        "detail": "rev-list --count HEAD = 578; expected 578 (577 from the source, plus the submission import commit)",
+        "detail": "rev-list --count HEAD = 582; expected 582 (581 from the source, plus the submission import commit)",
         "name": "development history preserved",
         "ok": true
       },
       {
-        "detail": "parent 60a7a1d IS known to the source and HEAD a16fc93 is not -- the import commit must be new and must sit directly on the source's history",
+        "detail": "parent b0d141e IS known to the source and HEAD 13955cf is not -- the import commit must be new and must sit directly on the source's history",
         "name": "history rooted in the source repository",
         "ok": true
       },
@@ -106,7 +106,7 @@
         "ok": true
       },
       {
-        "detail": "README.md carries the split banner for role=thief (32941 bytes read)",
+        "detail": "README.md carries the split banner for role=thief (33643 bytes read)",
         "name": "rule-49 cross-link block present",
         "ok": true
       },
@@ -146,12 +146,12 @@
         "ok": true
       },
       {
-        "detail": "exit 0; 2641 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
+        "detail": "exit 0; 2647 passed, 0 failed; coverage 97.42% against fail_under 85.0% (a run of 0 tests fails this row)",
         "name": "pytest --cov",
         "ok": true
       }
     ],
-    "source_commit": "60a7a1d",
+    "source_commit": "b0d141e",
     "staged": 1070,
     "verdict": "pass"
   }
