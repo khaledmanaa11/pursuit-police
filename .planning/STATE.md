@@ -3,76 +3,46 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-Resume file: None -- 08-11 is committed and closed, and it was the LAST UNATTENDED PLAN OF THE
-  PROJECT. The tree is clean apart from the untracked throwaway `game_artifacts/`, which must
-  NEVER be committed (D7-19). **WAVE 4 IS COMPLETE. EVERYTHING THAT REMAINS IS A HUMAN'S:**
-  08-12 (publish), 08-13 (league games, also needs 07-10), 08-14 (submit).
-  WHAT 08-12 INHERITS, WRITTEN DOWN RATHER THAN REMEMBERED: two split repositories at
-  `C:\Users\Hp\pursuit-split-repos\pursuit-police` (`daa16a7`) and `...\pursuit-thief`
-  (`b0cb27b`), rebuilt from source commit `99a8959`, **12/12 rows each**, **1046 tracked files
-  each**, **ZERO REMOTES**, one commit apiece, histories disjoint from this repository, and each
-  carrying an **annotated tag `v1.00`** on its own HEAD -- **NOT PUSHED**. Tag tree file count
-  1046 = `git ls-files` in both. `git tag -l` IN THIS REPOSITORY IS STILL EMPTY, DELIBERATELY.
-  THE TAG NAME IS DERIVED, NOT CHOSEN (D-79): `v` + `src/pursuit/shared/version.py` `VERSION`.
-  T5-06 IS CLOSED -- `pyproject.toml` moved `1.00.0` -> `1.00` and now NAMES `version.py` as the
-  source it copies; `tests/unit/test_version_single_source.py` compares RAW STRINGS, never
-  PEP-440 versions, because `1.00` and `1.0` are the same version and two different tag names.
-  Proven to fail three ways (`1.0` -> 1 failed; drifted `VERSION` -> 3 failed; drifted config
-  JSON -> 1 failed), each mutation asserted landed before the run and reverted after.
-  TWO REASONS THE TAG IS NOT IN THIS REPOSITORY, one decided and one MEASURED: D-79 puts it on
-  the submitted artifact, and an external process pushes this repository's `origin/main`
-  unbidden (observed 2026-08-14 and 2026-08-16, no git hook responsible), so a local tag here
-  could be swept outward by something nobody in the session controls. Written into
-  `GATE-8-MEASUREMENT.md` and the `G6-08` checklist row, not only into a summary.
-  **GATE-8 IS NOT MET AND THE RECORD SAYS SO IN ITS FIRST LINE.** Three criteria, six halves,
-  THREE PENDING with a named owner each: criterion 1 `BUILT+TAGGED PASS; PUBLISHED PENDING
-  (08-12)`; criterion 2 `README PASS; SCREENSHOTS PENDING (07-10); FORM+SUBMISSION PENDING
-  (08-14)`; criterion 3 `MACHINERY PASS; GAMES PENDING (08-13, needs 07-10)`.
-  `scripts/measure_gate8.py` exits 0 -- and the document states that exit 0 means "everything
-  that could be true before a human acts is true", NEVER "GATE-8 is met".
-  THREE RUNBOOKS EXIST AND EVERY BACKTICKED PATH IN THEM RESOLVES AGAINST `git ls-files`:
-  `PUBLISH-RUNBOOK.md` (08-12), `LEAGUE-RUNBOOK.md` (08-13), `SUBMISSION-RUNBOOK.md` (08-14).
-  Each states in its OWN text that no agent may enter credentials, click consent, create a
-  repository or send mail. The citation check found three paths cited as though they shipped --
-  both gitignored `games_played.json` counters and the not-yet-written league ledger -- now
-  exempted BY NAME with a test that refuses an exemption for anything actually tracked.
-  THE 89%->1% CORRECTION IS DONE, IN ALL FOUR SITES: the reproducible pair is **32.0% -> 7.5%**,
-  measured by `scripts/sensitivity_reconcile.py`. **The DIRECTION of the shipped decision is
-  confirmed and unchanged** (declining the swap is still worth ~25 points of thief survival, and
-  the cop seat still converts 100% either way); only the MAGNITUDE moves, and **THE CAUSE WAS
-  NEVER ESTABLISHED**. Append-with-correction, not overwrite: Act 4.3's table body is left
-  intact beneath its correction because `sensitivity_reconcile.py` PARSES that table for the
-  claim it re-measures -- overwriting it would have broken the script that found the problem.
-  A TRAP WORTH NOT REDISCOVERING: **`build_split_repos.py --replace` recreates both `.git`
-  directories and therefore DESTROYS THE TAGS.** Re-cut after every rebuild;
-  `PUBLISH-RUNBOOK.md` step 2 says so. This plan hit it once -- its first build produced tags at
-  police `4897b48` / thief `18d904c`, both now unreachable, and both figures are recorded in
-  `GATE-8-MEASUREMENT.md` rather than one silently replacing the other.
-  SIX DEVIATIONS, EVERY ONE A DEFECT IN THIS PLAN'S OWN WORK found by running it: a 2000-char
-  banner slice read a URL out of the README body; the declaration call site was sought in the
-  wrong module (criterion 3 read FAIL for a mechanism that works); the commit hash is NESTED at
-  `declarations.own.declaration.commit_hash`, not top level; the screenshot scan globbed a
-  `docs/assets/` that does not exist and reported 0 tracked images where the audit gate reports
-  5; the no-remote-verb scanner flagged its own constant; and the overall-PASS regex flagged the
-  GATE-8 record's own HONEST header -- a check impossible to satisfy honestly, the mirror image
-  of a check impossible to fail.
-  `check_submission.py` re-run at HEAD: **70 PASS / 3 GAP / 13 UNJUDGED**, exit 1 -- ONE row
-  moved (T5-06), exactly the one this plan owned, and no other row moved in either direction.
-  The three remaining GAPs: G1-03b and G5-04 (screenshots, **07-10's**, MARKED-ABSENT SLOTS and
-  not to be faked) and G6-08 (the tag -- **GAP here by design, PASS inside the split outputs**,
-  where the same gate returns 71 PASS / 2 GAP).
-  STILL OPEN AND STILL A HUMAN'S: OQ8-1 (D7-17, DRAFTED and UNSENT), OQ8-2 (the games-played
-  VALUE), OQ8-3 (where the form lives), OQ8-4 (the self-assessment SCORE -- the field in
-  `docs/SELF-ASSESSMENT.md` is BLANK and a test fails the moment a digit appears), OQ8-5 (**THE
-  LICENCE -- still `AWAITING_OWNER_CONFIRMATION`; DO NOT PUBLISH UNTIL THE OWNER CONFIRMS**),
-  OQ8-6 (the two repo URLs), OQ8-7 (the token ceiling), OQ8-8 (README language), OQ8-9 (is
-  `origin` public? -- FIRST ITEM OF 08-12 AND STILL UNANSWERED).
-  THIS AGENT PUSHED NOTHING, CREATED NO REPOSITORY, ADDED NO REMOTE, CUT NO TAG IN THIS
-  REPOSITORY and issued NO remote or `gh` command of any kind.
-  ONE THING RECORDED RATHER THAN FORCED: `uv.lock` still carries the project version as the
-  PEP-440-normalised `1.0.0` and `uv lock` does not rewrite it; `uv lock --check` exits 0. That
-  is a second reason the version pin compares `pyproject.toml` against `version.py` rather than
-  dragging in a file whose value a tool normalises.
+Resume file: None -- 08-12 IS COMPLETE. Both submission repositories are created,
+  pushed, tagged and carry the full development history. The tree is clean apart from
+  the untracked throwaway `game_artifacts/` and `consoleA_oauth.txt`, neither of which
+  may be committed (D7-19).
+  THE TWO PUBLISHED REPOSITORIES: `https://github.com/khaledmanaa11/pursuit-police` and
+  `https://github.com/khaledmanaa11/pursuit-thief`, built by
+  `scripts/build_split_repos.py --with-history` (D-83) into
+  `C:\Users\Hp\pursuit-split-repos\`, **1070 tracked files each**, **581 commits each**
+  (580 from this repository plus one import commit), **12/12 gate rows each**, and an
+  **annotated `v1.00`** on each HEAD. `git tag -l` IN THIS REPOSITORY IS STILL EMPTY,
+  DELIBERATELY (D-79: the tag belongs on the submitted artifact).
+  BOTH OWNER DECISIONS THAT BLOCKED 08-12 ARE ANSWERED: OQ8-9 -- `origin` IS PUBLIC, and
+  a scan of the FULL history found no provider-key shape and no credential file ever
+  committed, which is what made carrying the history safe. OQ8-5 -- **MIT, ADOPTED**;
+  `LICENSE` no longer carries its `PREPARED, NOT ADOPTED` block and
+  `docs/SUBMISSION-CHECKLIST.md` reads `CONFIRMED_BY_THE_OWNER`, the two held together
+  by a biconditional test.
+  OUR TWO RULE-49 URLs ARE RECORDED in `config/*/league.json` and read by the README
+  banner at build time; the OPPONENT'S TWO STAY `null` until league day, and
+  `load_league_config` still refuses live reporting while any slot is empty.
+  07-10 IS PROVEN BUT NOT SPENT: the live Gmail path was exercised end to end on
+  2026-08-19 -- consent, send-only scope, real transport, JSON attached -- delivered to
+  the OWNER'S OWN inbox via `scripts/live_send.py --recipient`. `--recipient` has no
+  default, so a rehearsal cannot reach the lecturer by omission. The send to the
+  mandatory address happens ONCE, on league day, carrying a real game report.
+  A TRAP WORTH NOT REDISCOVERING: `--replace` recreates both `.git` directories and
+  therefore DESTROYS THE TAGS **and the remotes**. Re-cut the tag after every rebuild,
+  and expect GATE-8 criterion 1 to read `PUBLISHED PENDING` until the outputs are
+  pushed again -- that is the gate working, not a regression.
+  A SECOND ONE: never import `scripts/gate7_common.py` from anything that must reach a
+  real service. It POPS `ANTHROPIC_API_KEY` and both Gmail path variables from
+  `os.environ` AT IMPORT, by design, so a grader's shell cannot turn a measurement into
+  a live send. It disarmed `live_send.py` three times before the cause was found.
+  STILL OPEN AND ALL THREE ARE A HUMAN'S: **08-13** (two scored league games -- needs an
+  opponent and their two repo URLs; nothing in the code blocks it), **08-14** (the form:
+  OQ8-3 where it lives, OQ8-4 the self-assessment score -- BLANK and pinned blank, and
+  OQ8-2 the games-played VALUE -- rule 38 makes a false figure an ABSOLUTE
+  disqualification, so nothing here may choose it; evidence in
+  `docs/phases/phase-7/GAMES-PLAYED-RECONSTRUCTION.md`), and **D7-17** (drafted, unsent,
+  at `docs/phases/phase-8/D7-17-QUESTION-FOR-THE-LECTURER.md`).
 ---
 
 ## CURRENT STATUS — 2026-08-20, and it supersedes the narrative below
