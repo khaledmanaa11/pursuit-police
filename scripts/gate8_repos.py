@@ -21,6 +21,7 @@ from pathlib import Path
 
 from gate8_common import ROLES, git_code, git_out, lines, split_root, tag_name
 from gate8_publication import publication_facts
+from split_docs import URL_ABSENT, repo_links
 
 #: Rule 50's floor, counted rather than asserted present.
 _RULE50 = {
@@ -80,17 +81,28 @@ def _banner_block(text: str, role: str) -> str:
 
 
 def _cross_link(root: Path, role: str) -> dict:
-    """Rule 49's two links -- present as STATED-ABSENT markers until 08-12."""
+    """Rule 49's two links, judged against the BUILT tree's own `league.json`.
+
+    Until 08-12 the banner carried stated-absent markers and the check was
+    `urls_in_banner == []`. The owner then published and the banner renders the
+    two recorded URLs, so the check is now an equality: exactly the non-null
+    own-team slots, nothing missing and nothing invented. With both slots null
+    it degrades to the old zero-URL rule -- narrower, never weaker.
+    """
     readme = root / "README.md"
     text = readme.read_text(encoding="utf-8") if readme.is_file() else ""
     other = "thief" if role == "police" else "police"
     banner_start = text.find(_BANNER.format(role=role))
     banner = _banner_block(text, role)
+    found = _URL.findall(banner)
+    expected = {url for url in repo_links(root).values() if url != URL_ABSENT}
     return {
         "banner_present": banner_start >= 0,
         "banner_lines": len(banner.splitlines()),
         "names_the_other_repository": f"pursuit-{other}" in text or f"`{other}`" in banner,
-        "urls_in_banner": _URL.findall(banner),
+        "urls_in_banner": found,
+        "urls_expected_from_league_config": sorted(expected),
+        "urls_match_league_config": set(found) == expected,
         "repo_split_doc_tracked": "docs/REPO-SPLIT.md" in _tracked(root),
     }
 

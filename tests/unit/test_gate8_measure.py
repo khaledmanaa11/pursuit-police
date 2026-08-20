@@ -32,7 +32,8 @@ _OK_OUTPUT = {
     "clean_worktree": True,
     "rule50": {"README": 1, "config": 28, "PRD": 16, "PLAN": 103, "TODO": 10},
     "cross_link": {"banner_present": True, "names_the_other_repository": True,
-                   "repo_split_doc_tracked": True, "urls_in_banner": []},
+                   "repo_split_doc_tracked": True, "urls_in_banner": [],
+                   "urls_match_league_config": True},
     "tag": {"exists": True, "annotated": True, "points_at_head": True,
             "tree_file_count": 1025, "pushed": False},
 }
@@ -79,6 +80,14 @@ def test_a_remote_no_longer_fails_the_built_half() -> None:
     c1 = built["criterion_1_two_cross_linked_repos_and_a_tag"]
     c1["outputs"]["thief"]["remote_count"] = 1
     assert report.criterion_1_built_verdict(c1) == report.PASS
+
+
+def test_a_banner_that_disagrees_with_league_json_fails_the_built_half() -> None:
+    """The successor to the old zero-URL rule: exactly the recorded slots, or FAIL."""
+    built = _report()
+    c1 = built["criterion_1_two_cross_linked_repos_and_a_tag"]
+    c1["outputs"]["police"]["cross_link"]["urls_match_league_config"] = False
+    assert report.criterion_1_built_verdict(c1) == report.FAIL
 
 
 def test_a_missing_tag_fails_and_exits_one() -> None:

@@ -113,7 +113,7 @@ uv run python scripts/measure_gate8.py
 | `remote_count` | **0** — the evidence that nothing has been published from here |
 | `rule50` | README / config / PRD / PLAN / TODO all **> 0**, counted not asserted |
 | `cross_link.banner_present`, `.names_the_other_repository`, `.repo_split_doc_tracked` | all true (rule 49) |
-| `cross_link.urls_in_banner` | **empty** — both rule-49 links are stated-absent markers until 08-12, never guessed URLs |
+| `cross_link.urls_in_banner` | **exactly the non-null own-team slots of the shipped `league.json`** (both real URLs since the owner published, 2026-08-19). Until 08-12 both links were stated-absent markers and this row read *empty*; the check is `urls_match_league_config` — nothing missing, nothing invented |
 | `tag.exists`, `.annotated`, `.points_at_head` | true — an annotated tag on that output's own `HEAD` |
 | `tag.tree_file_count` | **equal to `tracked_file_count`** — a tag on the wrong commit is what this row exists to catch |
 | `tag.pushed` | **false** |

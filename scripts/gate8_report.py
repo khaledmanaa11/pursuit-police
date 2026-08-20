@@ -53,7 +53,11 @@ def _output_ok(output: dict) -> bool:
         links.get("banner_present", False),
         links.get("names_the_other_repository", False),
         links.get("repo_split_doc_tracked", False),
-        not links.get("urls_in_banner", []),
+        # `not urls_in_banner` expired the same day remote_count did: since the
+        # owner published (2026-08-19) the banner RENDERS the two league.json
+        # URLs, so a correct build failed here. The banner must now carry
+        # exactly the recorded slots -- see gate8_repos._cross_link.
+        links.get("urls_match_league_config", False),
         tag["exists"], tag["annotated"], tag["points_at_head"],
         tag["tree_file_count"] == output["tracked_file_count"],
     ))
