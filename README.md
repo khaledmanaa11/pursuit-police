@@ -467,8 +467,21 @@ README linking to the other.
 Both are built from this development repository by `scripts/build_split_repos.py`, which runs
 `uv sync`, `ruff check`, `pytest --cov` and the 150-line scan **inside each output** before it
 reports success. Each carries the annotated tag **`v1.00`**, whose name is derived from
-`src/pursuit/shared/version.py` rather than chosen. The two histories are disjoint from this
-one and from each other.
+`src/pursuit/shared/version.py` rather than chosen.
+
+**Each carries this repository's full commit history** — 577 commits, plus one import
+commit that injects this banner and the provenance file. `docs/SEGAL_GUIDELINES.md`
+§17 grades *orderly Git history*, and it is judged on the repository handed in, so a
+submission built as one squashed commit would hide the record it is graded on. The
+build verifies the depth rather than assuming it: the commit count must equal this
+repository's own count **plus exactly one**, so a truncated or shallow clone fails the
+build instead of shipping as orderly with holes in it.
+
+Earlier builds produced one commit per output, with histories deliberately disjoint
+from this one — a choice made while this repository was private, so that no reflex
+`git push` could publish working history. That premise is gone: this repository is
+public, so the history is already published, and the clone that carries it removes the
+inherited remote before the build returns.
 
 The same two links are recorded in `config/<role>/league.json` under `league.repo_urls`. The
 remaining two slots there -- `opponent_cop` and `opponent_thief` -- stay `null` until an

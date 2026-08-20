@@ -1,14 +1,24 @@
 """The two generated documents a split repository carries (08-10).
 
-RULE 49 WANTS TWO REAL, CROSS-LINKED REPOSITORY LINKS. They do not exist: the
-repositories are created and pushed by a human at 08-12. So both links are
-written as a STATED-ABSENT marker and the tests assert that no URL-shaped string
-survives anywhere in either document.
+RULE 49 WANTS TWO REAL, CROSS-LINKED REPOSITORY LINKS, AND THE BANNER NOW READS
+THEM RATHER THAN ASSERTING THEY DO NOT EXIST. Until 08-12 they genuinely did
+not, so both were written as a STATED-ABSENT marker. The owner created and
+pushed both repositories on 2026-08-19; a banner that kept saying "not created
+or pushed yet" put a FALSE rule-49 claim at the top of the file whose body
+listed the real URLs three screens down. The same README contradicted itself
+about the one property rule 49 is about.
 
-A PLACEHOLDER WOULD BE WORSE THAN A HOLE. `https://github.com/<user>/pursuit-cop`
-reads as done to every human and every grep that goes looking, and nothing later
-in the pipeline distinguishes it from a real link. A hole announces itself. This
-is the discipline 08-04 already applied to `league.json`, whose loader refuses a
+THE LINKS COME FROM `config/<role>/league.json`, NEVER FROM A LITERAL HERE.
+`repo_links` reads `repo_urls.own_cop` / `own_thief` out of the shipped config,
+so the banner, the config and the loader that refuses a placeholder in live mode
+all answer to ONE value. A URL typed into this module would be a second source
+that could drift from the first without anything noticing.
+
+A PLACEHOLDER WOULD STILL BE WORSE THAN A HOLE, and `URL_ABSENT` is kept for
+exactly that. `https://github.com/<user>/pursuit-cop` reads as done to every
+human and every grep that goes looking. A slot that is null in `league.json` --
+the opponent's two, before league day -- still renders as a stated absence. This
+is the discipline 08-04 applied to `league.json`, whose loader refuses a
 placeholder outright when `reporting.mode = live` (D-81).
 
 THE INJECTION ANCHOR IS CHECKED, NOT ASSUMED. A splitter that cannot find the
@@ -25,8 +35,10 @@ COMPANION = {"police": "thief", "thief": "police"}
 ROLE_NOUN = {"police": "cop", "thief": "thief"}
 #: The machine-checkable marker `split_verify` looks for in a built README.
 MARKER = "<!-- split-repo-banner"
-#: The stated-absent value. Not a URL, not a placeholder, not empty.
-URL_ABSENT = "**NOT ASSIGNED — the repository is not created or pushed yet (08-12)**"
+#: The stated-absent value, for a slot `league.json` really does leave null.
+URL_ABSENT = "**NOT ASSIGNED — no URL is recorded in `league.json` for this slot**"
+#: `league.json` slot names, per role, for the two repositories WE publish.
+OWN_SLOT = {"police": "own_cop", "thief": "own_thief"}
 
 
 class MissingAnchorError(RuntimeError):
@@ -37,9 +49,51 @@ class EmptyBuildError(RuntimeError):
     """A provenance document was asked to describe a zero-file build."""
 
 
-def banner(role: str, source_commit: str, generated: str) -> str:
-    """The rule-49 cross-link block for *role*, with both links stated absent."""
+def repo_links(source_root) -> dict:
+    """Both roles' published URLs, read from the shipped `league.json`.
+
+    One source of truth. A slot that is null, empty or missing comes back as
+    `URL_ABSENT`, so the banner states an absence rather than inventing a link.
+    """
+    import json
+    from pathlib import Path
+
+    links = {}
+    for role, slot in OWN_SLOT.items():
+        path = Path(source_root) / "config" / role / "league.json"
+        value = None
+        if path.is_file():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            value = (data.get("league", data).get("repo_urls") or {}).get(slot)
+        links[role] = value.strip() if isinstance(value, str) and value.strip() else URL_ABSENT
+    return links
+
+
+def banner(role: str, source_commit: str, generated: str, links: dict | None = None) -> str:
+    """The rule-49 cross-link block for *role*, carrying both published URLs.
+
+    *links* maps each role to its URL or to `URL_ABSENT`; omitting it states both
+    absent, which is what a caller with no config to read should say.
+    """
     other = COMPANION[role]
+    links = links or {"police": URL_ABSENT, "thief": URL_ABSENT}
+    mine, theirs = links.get(role, URL_ABSENT), links.get(other, URL_ABSENT)
+    absent = URL_ABSENT in (mine, theirs)
+    note = (
+        [
+            "> **A link shown as NOT ASSIGNED is stated absent, never filled with a",
+            "> plausible-looking value.** Inventing one would read as done to every human",
+            f"> and every search that went looking for it. `config/{role}/league.json` is the",
+            "> single source these are read from; its loader refuses a placeholder when",
+            "> reporting runs live.",
+        ]
+        if absent
+        else [
+            f"> Both links are read from `config/{role}/league.json` at build time, never",
+            "> typed into the generator, so the banner, the config and the loader that",
+            "> refuses a placeholder in live mode cannot drift apart.",
+        ]
+    )
     return "\n".join((
         f"{MARKER} role={role} source={source_commit} -->",
         "",
@@ -50,14 +104,10 @@ def banner(role: str, source_commit: str, generated: str) -> str:
         ">",
         "> | Rule-49 link | Value |",
         "> |---|---|",
-        f"> | This repository (`{role}`) | {URL_ABSENT} |",
-        f"> | Companion repository (`{other}`) | {URL_ABSENT} |",
+        f"> | This repository (`{role}`) | {mine} |",
+        f"> | Companion repository (`{other}`) | {theirs} |",
         ">",
-        "> **Both links are stated absent rather than filled with a plausible-looking",
-        "> value.** Inventing one would read as done to every human and every search that",
-        f"> went looking for it. `config/{role}/league.json` carries the same two fields and",
-        "> its loader refuses a placeholder when reporting runs live. Filling them in is a",
-        "> human step.",
+        *note,
         ">",
         "> Both `config/police/` and `config/thief/` ship here: the test suite loads both",
         "> seats, so a repository carrying one of them could not run its own gates. The two",

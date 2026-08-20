@@ -41,7 +41,7 @@ from split_build import (  # noqa: E402
     init_and_commit,
     prepare_destination,
 )
-from split_docs import banner, inject, provenance  # noqa: E402
+from split_docs import banner, inject, provenance, repo_links  # noqa: E402
 from split_gates import (  # noqa: E402
     RUFF,
     SUITE,
@@ -112,7 +112,10 @@ def build_one(source_root: Path, dest_root: Path, role: str, replace: bool,
 
     readme = dest / "README.md"
     readme.write_text(
-        inject(readme.read_text(encoding="utf-8"), banner(role, source_commit, stamp)),
+        inject(
+            readme.read_text(encoding="utf-8"),
+            banner(role, source_commit, stamp, repo_links(source_root)),
+        ),
         encoding="utf-8", newline="\n",
     )
     (dest / PROVENANCE).parent.mkdir(parents=True, exist_ok=True)
