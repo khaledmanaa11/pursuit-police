@@ -1,5 +1,29 @@
 # P2P Cops-and-Robbers — a cop agent and a thief agent
 
+<!-- split-repo-banner role=police source=d1ec862 -->
+
+> **This is the `police` repository — the cop agent — one half of a
+> two-repository submission (rule 49).** It is generated from the development
+> repository at commit `d1ec862` on 2026-08-20T15:30:27Z by
+> `scripts/build_split_repos.py`, from `git ls-files` and nothing else.
+>
+> | Rule-49 link | Value |
+> |---|---|
+> | This repository (`police`) | https://github.com/khaledmanaa11/pursuit-police |
+> | Companion repository (`thief`) | https://github.com/khaledmanaa11/pursuit-thief |
+>
+> Both links are read from `config/police/league.json` at build time, never
+> typed into the generator, so the banner, the config and the loader that
+> refuses a placeholder in live mode cannot drift apart.
+>
+> Both `config/police/` and `config/thief/` ship here: the test suite loads both
+> seats, so a repository carrying one of them could not run its own gates. The two
+> agents remain separate PROCESSES with no shared runtime state (rule 2); these are
+> two static directories of JSON.
+>
+> The live games-played counters are deliberately absent — see
+> `docs/REPO-SPLIT.md`.
+
 Two autonomous agents — a **cop** and a **thief** — that play a distributed cops-and-robbers
 match on a 7×7 grid over a peer-to-peer network with **no central server and no referee**.
 Final project for *Orchestration of AI Agents* (University of Haifa).

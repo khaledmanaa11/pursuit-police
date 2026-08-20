@@ -7,20 +7,28 @@
     "outputs": {
       "police": {
         "clean_worktree": true,
-        "commit_count": 578,
+        "commit_count": 584,
         "cross_link": {
-          "banner_lines": 25,
+          "banner_lines": 23,
           "banner_present": true,
           "names_the_other_repository": true,
           "repo_split_doc_tracked": true,
-          "urls_in_banner": []
+          "urls_expected_from_league_config": [
+            "https://github.com/khaledmanaa11/pursuit-police",
+            "https://github.com/khaledmanaa11/pursuit-thief"
+          ],
+          "urls_in_banner": [
+            "https://github.com/khaledmanaa11/pursuit-police",
+            "https://github.com/khaledmanaa11/pursuit-thief"
+          ],
+          "urls_match_league_config": true
         },
         "exists": true,
-        "head": "6b3946d",
+        "head": "0fcfcc9",
         "publication": {
           "all_remotes_are_https": false,
           "branch_pushed": false,
-          "local_main": "6b3946d33400a058fc8169d299c31da6f59cb204",
+          "local_main": "0fcfcc9b051d02ba9e1fa3affe2c4af97b1ac841",
           "origin_main": "refs/remotes/origin/main",
           "remote_count": 0,
           "remote_urls": [],
@@ -45,27 +53,35 @@
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "6b3946d33400a058fc8169d299c31da6f59cb204",
-          "tree_file_count": 1070
+          "target_commit": "0fcfcc9b051d02ba9e1fa3affe2c4af97b1ac841",
+          "tree_file_count": 1080
         },
-        "tracked_file_count": 1070
+        "tracked_file_count": 1080
       },
       "thief": {
         "clean_worktree": true,
-        "commit_count": 578,
+        "commit_count": 584,
         "cross_link": {
-          "banner_lines": 25,
+          "banner_lines": 23,
           "banner_present": true,
           "names_the_other_repository": true,
           "repo_split_doc_tracked": true,
-          "urls_in_banner": []
+          "urls_expected_from_league_config": [
+            "https://github.com/khaledmanaa11/pursuit-police",
+            "https://github.com/khaledmanaa11/pursuit-thief"
+          ],
+          "urls_in_banner": [
+            "https://github.com/khaledmanaa11/pursuit-thief",
+            "https://github.com/khaledmanaa11/pursuit-police"
+          ],
+          "urls_match_league_config": true
         },
         "exists": true,
-        "head": "a16fc93",
+        "head": "16272ee",
         "publication": {
           "all_remotes_are_https": false,
           "branch_pushed": false,
-          "local_main": "a16fc93e3638d92b5bf95faec4bccbe22fbdc02a",
+          "local_main": "16272ee00dc486843af46a2f0b093474562456a4",
           "origin_main": "refs/remotes/origin/main",
           "remote_count": 0,
           "remote_urls": [],
@@ -90,10 +106,10 @@
           "name": "v1.00",
           "points_at_head": true,
           "pushed": false,
-          "target_commit": "a16fc93e3638d92b5bf95faec4bccbe22fbdc02a",
-          "tree_file_count": 1070
+          "target_commit": "16272ee00dc486843af46a2f0b093474562456a4",
+          "tree_file_count": 1080
         },
-        "tracked_file_count": 1070
+        "tracked_file_count": 1080
       }
     },
     "published": {
@@ -118,13 +134,13 @@
         "academic_sections_expected": 6,
         "missing_academic_942_headings": [],
         "missing_segal_21_headings": [],
-        "readme_bytes": 32942
+        "readme_bytes": 33644
       },
       "thief": {
         "academic_sections_expected": 6,
         "missing_academic_942_headings": [],
         "missing_segal_21_headings": [],
-        "readme_bytes": 32941
+        "readme_bytes": 33643
       }
     },
     "readme_sections_verdict": "PASS",
@@ -224,7 +240,7 @@
     "unchanged_by_this_measurement": true
   },
   "gate": "GATE-8 (submission gate, .planning/ROADMAP.md Phase 8)",
-  "generated_at": "2026-08-20T13:08:31.393947+00:00",
+  "generated_at": "2026-08-20T15:29:29.094461+00:00",
   "no_remote_command_was_issued": {
     "clean": true,
     "network_verb_hits_in_this_package": {}
